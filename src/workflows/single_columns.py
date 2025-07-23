@@ -9,10 +9,10 @@ from src.outliers import detect_outliers
 
 # This trains on and predicts values for one specific column, no PCA.
 def single_column(
-        x, y, do_kfold, col_name, show_bounds, 
+        x, y, kfold, col_name, show_bounds, 
         std_multiplier, frac, output_file, pct_file, mode
 ):
-    if do_kfold:
+    if kfold:
         print(f"PCA disabled - using K-fold cross-validation on one file.")
     else:
         print(f"PCA disabled - single run on column {col_name}.")
@@ -26,7 +26,7 @@ def single_column(
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
     fold = 1
     for train_idx, test_idx in kf.split(x):
-        if do_kfold:
+        if kfold:
             print(f"Fold {fold} begin: ")
 
         # Prepare data for the model
@@ -44,12 +44,12 @@ def single_column(
 
         # Calculate and print SMSE
         smse = np.sqrt(mean_squared_error(y_test, predictions))
-        if do_kfold:
+        if kfold:
             print(f"Fold {fold} SMSE: {smse}")
         else:
             print(f"Single run SMSE: {smse}")
 
-        if do_kfold:
+        if kfold:
             # Plot graph for individual fold
             plot_graph(
                 y_test, predictions, f"{col_name} - Fold {fold}", smse, 

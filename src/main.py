@@ -39,12 +39,12 @@ def main():
     if config.DO_SINGLE_COLUMN:
         # No PCA or ensemble use, train on one column's values only
         single_column(
-            x, y, config.DO_KFOLD, col_name, 
+            x, y, config.KFOLD, col_name, 
             config.SHOW_BOUNDS, config.STD_MULTIPLIER, config.FRAC, 
             output_file, pct_file, config.MODE
         )
 
-    if config.USE_PCA:
+    if config.DO_PCA:
         print("PCA enabled - loading full dataset.")
         y_raw = load_all_columns(columns_dir, values_file, config.MAX_SEQS)
 
@@ -55,7 +55,7 @@ def main():
         pca_values(
             x, y_raw, config.PCA_COMPONENTS, 
             config.SHOW_BOUNDS, config.STD_MULTIPLIER, config.FRAC, 
-            output_file, pct_file, config.MODE, config.USE_PCA
+            output_file, pct_file, config.MODE, config.DO_PCA
         )
     
     if config.DO_ENSEMBLE:
@@ -69,8 +69,9 @@ def main():
     if config.DO_DOUBLE_COLUMNS:
         print("Double columns mode enabled.")
 
-        for i in range(30, 50):
+        for i in range(config.RANGE_START, config.RANGE_END):
             file_num2 = i
+            print(file_num2)
 
             # Load second column's values using the same sequences
             np.random.seed(42)  # Reset seed for same shuffling as y

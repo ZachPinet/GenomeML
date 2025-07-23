@@ -55,13 +55,13 @@ def complex_log(outliers, output_file, column_name):
 # This detects and logs outliers based on deviation from LOESS.
 def detect_outliers(
         sequences, y_true, y_pred, output_file, pct_file, col_name, 
-        std_multiplier, frac, mode, use_pca=False
+        std_multiplier, frac, mode, do_pca=False
 ):
     if mode == 'off':
         print("Outlier detection skipped (mode='off').")
         return
     
-    if use_pca:
+    if do_pca:
         mode = 'simple'
         print("PCA mode enabled - using simple outlier detection.")
     
@@ -100,7 +100,7 @@ def detect_outliers(
                 f"({percent:.2f}%)\n")
 
     # Select the method of logging
-    if mode == 'simple' or use_pca:
+    if mode == 'simple' or do_pca:
         simple_log(outliers, f'{col_name}_outliers.txt')
     elif mode == 'complex':
         complex_log(outliers, output_file, col_name)

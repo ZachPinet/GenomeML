@@ -9,7 +9,7 @@ from statsmodels.nonparametric.smoothers_lowess import lowess
 # This makes a heatmap scatterplot with the data.
 def plot_graph(
         y_true, y_pred, col_name, smse, show_bounds, 
-        std_multiplier, frac, use_pca=False
+        std_multiplier, frac, do_pca=False
 ):
     plt.figure(figsize=(10, 6))
 
@@ -51,8 +51,8 @@ def plot_graph(
         )
 
     # Labels
-    xlabel = 'True Values (PCA)' if use_pca else 'True Values'
-    ylabel = 'Predicted Values (PCA)' if use_pca else 'Predicted Values'
+    xlabel = 'True Values (PCA)' if do_pca else 'True Values'
+    ylabel = 'Predicted Values (PCA)' if do_pca else 'Predicted Values'
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(f'{col_name} (r={corr:.3f}) (SMSE: {smse:.4f})', fontsize=11)

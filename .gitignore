@@ -206,4 +206,4 @@ __marimo__/
 .venv_genomeml/
 .vscode/
 development_files/
-config_local.py
+config_local.txt
