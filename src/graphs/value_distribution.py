@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 from pathlib import Path
 
@@ -19,7 +18,10 @@ def plot_distribution(values, file_name, save_dir):
     fig.suptitle(f"Distribution of Values from {file_base}", fontsize=16, fontweight='bold')
 
     # Boxplot
-    sns.boxplot(x=values, color='lightblue', ax=axes[0])
+    axes[0].boxplot(
+        values, vert=False, patch_artist=True,
+        boxprops=dict(facecolor='lightblue')
+    )
     axes[0].set_title("Boxplot of Values")
     axes[0].set_xlabel("Value")
 
