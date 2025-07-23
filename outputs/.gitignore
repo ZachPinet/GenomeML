@@ -1,0 +1,9 @@
+# Users will generate their own output files here.
+
+*
+!.gitignore
+!README.md
+!components/
+!ensemble/
+!graphs/
+!outliers/

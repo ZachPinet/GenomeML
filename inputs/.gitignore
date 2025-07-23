@@ -1,0 +1,8 @@
+# Users should place their own data files here:
+# - seqs.fa: FASTA sequence file
+# - columns/: Directory containing signal data files (*.txt)
+
+*
+!.gitignore
+!README.md
+!columns/
