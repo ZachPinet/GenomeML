@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
+from src import config
 from src.graphs.dot_plot import plot_graph
 from src.model import build_model
 from src.outliers import detect_outliers
@@ -99,7 +100,10 @@ def ensemble(
         y_train = y[train_indices]
         
         model = build_model((500, 4), 1)
-        model.fit(x_train, y_train, epochs=10, batch_size=32, verbose=0)
+        model.fit(x_train, y_train, 
+                  epochs=10, batch_size=32, 
+                  verbose=config.VERBOSE
+        )
         
         full_predictions = model.predict(x, verbose=0).flatten()
         all_predictions.append(full_predictions)

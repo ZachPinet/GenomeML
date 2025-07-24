@@ -6,6 +6,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+from src import config
 from src.graphs.dot_plot import plot_graph
 from src.model import build_model
 from src.outliers import detect_outliers
@@ -45,11 +46,13 @@ def pca_values(
         # Build, train, and test model
         model = build_model((x.shape[1], x.shape[2]), 1)  # (500, 4)
         model.fit(
-            x_train, y_train, epochs=10, batch_size=32, 
-            validation_data=(x_test, y_test), verbose=0
+            x_train, y_train, 
+            epochs=10, batch_size=32, 
+            validation_data=(x_test, y_test), 
+            verbose=config.VERBOSE
         )
         
-        predictions = model.predict(x_test).flatten()
+        predictions = model.predict(x_test, verbose=0).flatten()
 
         # Transform predictions back to original scale (original units)
         #predictions = scaler_pca.inverse_transform(predictions)

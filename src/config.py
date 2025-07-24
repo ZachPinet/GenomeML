@@ -18,6 +18,7 @@ DEFAULT_SETTINGS = {
     'DATA_SPLITS': 10,
     'RANGE_START': 0,
     'RANGE_END': 50,
+    'VERBOSE': 1,
     'SHOW_BOUNDS': True,
     'STD_MULTIPLIER': 2,
     'FRAC': 0.3,  # 0-1. Affects smoothness and sensitivity of curve

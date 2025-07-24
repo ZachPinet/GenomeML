@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 
+from src import config
 from src.graphs.dot_plot import plot_graph
 from src.model import build_model
 from src.outliers import detect_outliers
@@ -37,10 +38,12 @@ def single_column(
 
         # Train the model
         model.fit(
-            x_train, y_train, epochs=10, batch_size=32, 
-            validation_data=(x_test, y_test), verbose=0
+            x_train, y_train, 
+            epochs=10, batch_size=32, 
+            validation_data=(x_test, y_test), 
+            verbose=config.VERBOSE
         )
-        predictions = model.predict(x_test).flatten()
+        predictions = model.predict(x_test, verbose=0).flatten()
 
         # Calculate and print SMSE
         smse = np.sqrt(mean_squared_error(y_test, predictions))

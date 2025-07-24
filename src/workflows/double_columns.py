@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
+from src import config
 from src.graphs.dot_plot import plot_graph
 from src.model import build_model
 from src.outliers import detect_outliers
@@ -65,7 +66,10 @@ def double_columns(
         
         # Build, train, and test model
         model = build_model((500, 4), 1)
-        model.fit(x_train, y_train, epochs=10, batch_size=32, verbose=1)
+        model.fit(x_train, y_train, 
+                  epochs=10, batch_size=32, 
+                  verbose=config.VERBOSE
+        )
         
         predictions = model.predict(x_test, verbose=0).flatten()
         
