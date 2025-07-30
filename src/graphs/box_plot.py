@@ -5,7 +5,7 @@ from pathlib import Path
 
 # Configuration variables
 START_LINE = 3  # Line number where data starts (1-indexed)
-TRACKED_LINE = 3     # Line number to track and highlight (1-indexed)
+TRACKED_LINE = 3  # Line number to track and highlight (1-indexed)
 
 # Files to analyze (1 or 2 files only)
 RUN_DATA_FILES = [
@@ -161,7 +161,7 @@ def create_boxplot(
             title, tracked_value = tracked_data_list[i]
             tracked_info = (
                 f"\nTracked Line: {TRACKED_LINE}\n"
-                "Value: {tracked_value:.4f}\n({title})"
+                f"Value: {tracked_value:.4f}\n({title})"
             )
         
         stats_text = (
