@@ -18,7 +18,7 @@ def log_bic_score(y_true, y_pred, model, scenario_name, run_details):
     smse = np.sqrt(mean_squared_error(y_true, y_pred))
     
     # Log to file (append mode like outlier_percents.txt)
-    bic_file = Path.cwd() / 'outputs' / 'bic_scores.txt'
+    bic_file = Path.cwd() / 'outputs' / 'run_data' / 'run_data1.txt'
     with open(bic_file, 'a') as f:
         f.write(
             f"{scenario_name}\t{bic:.4f}\t{correlation:.4f}\t"
