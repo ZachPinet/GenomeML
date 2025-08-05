@@ -6,6 +6,7 @@ import tensorflow as tf
 
 from . import config
 from .data_loading import load_data, load_all_columns
+from .gui.menu import start_gui
 from .workflows.double_columns import double_columns
 from .workflows.ensemble import ensemble
 from .workflows.pca import pca_values
@@ -14,6 +15,11 @@ from .workflows.single_columns import single_column
 
 # This is the program's main function.
 def main():
+    # Check if GUI mode is enabled
+    if config.WINDOW:
+        start_gui()
+        return
+        
     # Make sure any randomization is repeatable.
     random.seed(config.RANDOM_SEED)
     np.random.seed(config.RANDOM_SEED)

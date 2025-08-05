@@ -24,6 +24,7 @@ DEFAULT_SETTINGS = {
     'FRAC': 0.3,  # 0-1. Affects smoothness and sensitivity of curve
     'MODE': 'both',  # Log outliers. 'simple', 'complex', 'both', 'off'
     'RANDOM_SEED': 42,
+    'WINDOW': True,
 }
 
 
