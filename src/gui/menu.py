@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .gui_helpers import configure_size, configure_style
-#from .run_window import RunWindow
+from .run_window import RunWindow
 
 
 class MainMenu:
@@ -62,7 +62,7 @@ class MainMenu:
     
     def open_run_window(self):
         self.root.withdraw()  # Hide main menu
-        #run_win = RunWindow(self)
+        run_win = RunWindow(self)
     
     def view_outputs(self):
         # Placeholder for future implementation

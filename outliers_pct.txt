@@ -1,0 +1,4 @@
+col0A40_on_col0B60 Outliers detected: 5900/94471 (6.25%)
+col2A40_on_col2B60 Outliers detected: 5992/94471 (6.34%)
+col2A40_on_col3B60 Outliers detected: 6138/94471 (6.50%)
+col2A40_on_col4B60 Outliers detected: 6053/94471 (6.41%)

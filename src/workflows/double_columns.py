@@ -10,7 +10,7 @@ from src.utils import log_bic_score
 
 # This trains on half of one column and tests on half of another.
 def double_columns(
-        x, y, y2, file_num, file_num2, train_pctg, show_bounds, 
+        x, y, y2, train_file, test_file, train_pctg, show_bounds, 
         std_multiplier, frac, output_file, pct_file, mode
 ):
     
@@ -21,7 +21,7 @@ def double_columns(
     
     # Calculate which digits go to training vs testing
     train_digits = train_pctg // 10  # e.g., 60% = 6 digits
-    test_digits = 10 - train_digits         # e.g., 40% = 4 digits
+    test_digits = 10 - train_digits  # e.g., 40% = 4 digits
 
     # Split indices based on last digit
     train_indices = []
@@ -47,14 +47,14 @@ def double_columns(
 
     # Define the four training scenarios
     scenarios = [
-        (f"col{file_num}A{train_pctg}_on_col{file_num2}B{100-train_pctg}", 
+        (f"col{train_file}A{train_pctg}_on_col{test_file}B{100-train_pctg}", 
          x_train, col1A, x_test, col2B
         ),
-        #(f"col{file_num}B_on_col{file_num2}A", x_odd, col1B, x_even, col2A),
+        #(f"col{train_file}B_on_col{test_file}A", x_odd, col1B, x_even, col2A),
     ]
     '''scenarios2 = [
-        (f"col{file_num2}A_on_col{file_num}B", x_even, col2A, x_odd, col1B),
-        (f"col{file_num2}B_on_col{file_num}A", x_odd, col2B, x_even, col1A)
+        (f"col{test_file}A_on_col{train_file}B", x_even, col2A, x_odd, col1B),
+        (f"col{test_file}B_on_col{train_file}A", x_odd, col2B, x_even, col1A)
     ]
 
     if file_num != file_num2:
@@ -79,7 +79,7 @@ def double_columns(
         print(f"SMSE: {smse:.4f}, Correlation: {correlation:.4f}")
 
         # Log BIC score (new line)
-        run_details = f"file_num={file_num},file_num2={file_num2}"
+        run_details = f"file_num={train_file},file_num2={test_file}"
         log_bic_score(y_test, predictions, model, scenario_name, run_details)
         
         # Save results

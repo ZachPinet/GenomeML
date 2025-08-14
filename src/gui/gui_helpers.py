@@ -31,6 +31,9 @@ def configure_style():
         "Button.TButton", background="lightgray", 
         foreground="black", font=('Arial', 12, 'bold')
     )
+    style.configure(
+        "ButtonFrame.TFrame", background="#00173c"
+    )
     style.configure(style_name, background='#00173c')
 
     return style_name

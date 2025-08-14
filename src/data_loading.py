@@ -42,7 +42,6 @@ def load_data(fasta_file, values_file, max_seqs):
     all_pairs = list(zip(sequences, values))
     np.random.shuffle(all_pairs)
     final_pairs = all_pairs[:max_seqs]
-    print(f"Unbalanced. Using {len(final_pairs)} total sequences.")
 
     # One-hot encode the sequences to finalize the pairs
     final_sequences = [one_hot_encode(seq) for (seq, val) in final_pairs]
