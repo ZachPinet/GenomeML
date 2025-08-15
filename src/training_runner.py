@@ -4,12 +4,12 @@ from pathlib import Path
 import numpy as np
 import tensorflow as tf
 
-from . import config
-from .data_loading import load_data, load_all_columns
-from .workflows.single_columns import single_column
-from .workflows.pca import pca_values
-from .workflows.ensemble import ensemble
-from .workflows.double_columns import double_columns
+from src import config
+from src.data_loading import load_data, load_all_columns
+from src.workflows.single_columns import single_column
+from src.workflows.pca import pca_values
+from src.workflows.ensemble import ensemble
+from src.workflows.double_columns import double_columns
 
 # Run the appropriate training workflow based on current config values
 def run_training():

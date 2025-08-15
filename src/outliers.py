@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 from statsmodels.nonparametric.smoothers_lowess import lowess
 
-from .data_loading import one_hot_decode
+from src.data_loading import one_hot_decode
 
 
 # This outputs the outliers to a new file.

@@ -5,9 +5,9 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import ttk
 
-from .. import config
-from ..training_runner import run_training
-from .gui_helpers import configure_size, configure_style
+from src import config
+from src.gui.gui_helpers import configure_size, configure_style
+from src.training_runner import run_training
 
 
 class RunWindow:

@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from .gui_helpers import configure_size, configure_style
-from .run_window import RunWindow
+from src.gui.gui_helpers import configure_size, configure_style
+from src.gui.run_window import RunWindow
 
 
 class MainMenu:

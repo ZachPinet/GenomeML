@@ -1,6 +1,6 @@
-from . import config
-from .gui.menu import start_gui
-from .training_runner import run_training
+from src import config
+from src.gui.menu import start_gui
+from src.training_runner import run_training
 
 
 # This is the program's main function.
