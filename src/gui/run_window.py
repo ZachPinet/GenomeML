@@ -6,7 +6,7 @@ from pathlib import Path
 from tkinter import ttk
 
 from src import config
-from src.gui.gui_helpers import configure_size, configure_style
+from src.gui.gui_helpers import configure_size, configure_style, on_mousewheel
 from src.training_runner import run_training
 
 
@@ -145,8 +145,59 @@ class RunWindow:
     def create_widgets(self):
         # Main frame with scrollbar
         style_name = configure_style()
-        main_frame = ttk.Frame(self.root, style=style_name, padding="20")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+        # Create main frame (container for scrollbar)
+        container = ttk.Frame(self.root)
+        container.pack(fill="both", expand=True)
+
+        # Canvas for scrolling
+        canvas = tk.Canvas(container, highlightthickness=0, bg='#00173c')
+        scrollbar = ttk.Scrollbar(
+            container, orient="vertical", command=canvas.yview
+        )
+
+        # Main content frame
+        main_frame = ttk.Frame(canvas, style=style_name, padding="20")
+
+        # Pack scrollbar and canvas
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(fill="both", expand=True)
+
+        # Configure scrolling
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas_frame_id = canvas.create_window(
+            (0, 0), window=main_frame, anchor="n"
+        )
+
+        # And add this function to center the frame:
+        def center_frame_in_canvas(event=None):
+            canvas.update_idletasks()  # Ensure canvas is properly sized
+            canvas_width = canvas.winfo_width()
+            if canvas_width > 1:
+                # Center the frame horizontally in the canvas
+                canvas.coords(canvas_frame_id, canvas_width // 2, 0)
+                canvas.itemconfig(canvas_frame_id, width=canvas_width)
+
+        # Update scroll region when content changes
+        def update_scroll_region(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+            center_frame_in_canvas()
+        
+        main_frame.bind('<Configure>', update_scroll_region)
+        canvas.bind('<Configure>', center_frame_in_canvas)
+        
+        # Mouse wheel scrolling support        
+        canvas.bind(
+            "<MouseWheel>", lambda event: on_mousewheel(canvas, event)
+        )
+        self.root.bind(
+            "<MouseWheel>", lambda event: on_mousewheel(canvas, event)
+        )
+
+        # Configure the main_frame grid weights
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.columnconfigure(1, weight=0)
+        main_frame.columnconfigure(2, weight=1)
         
         # Title
         title = ttk.Label(
@@ -159,7 +210,7 @@ class RunWindow:
             main_frame, text="   Workflow Mode", padding="5"
         )
         self.workflow_frame.grid(
-            row=1, column=0, sticky=(tk.E), pady=10, padx=(0, 10)
+            row=1, column=0, pady=10, padx=(0, 10), sticky="E"
         )
         self.workflow_frame.configure(width=200, height=120)
         self.workflow_frame.grid_propagate(False)
@@ -169,7 +220,7 @@ class RunWindow:
             main_frame, text="   File Selection", padding="5"
         )
         self.file_frame.grid(
-            row=1, column=2, sticky=(tk.W), pady=10, padx=(10, 0)
+            row=1, column=2, pady=10, padx=(10, 0), sticky="W"
         )
         self.file_frame.configure(width=200, height=120)
         self.file_frame.grid_propagate(False)
@@ -179,7 +230,7 @@ class RunWindow:
             main_frame, text="   Workflow Options", padding="5"
         )
         self.options_frame.grid(
-            row=2, column=0, sticky=(tk.E), pady=10, padx=(0, 10)
+            row=2, column=0, pady=10, padx=(0, 10), sticky="E"
         )
         self.options_frame.configure(width=200, height=120)
         self.options_frame.grid_propagate(False)
@@ -189,7 +240,7 @@ class RunWindow:
             main_frame, text="   File Options", padding="5"
         )
         self.file_options_frame.grid(
-            row=2, column=2, sticky=(tk.W), pady=10, padx=(10, 0)
+            row=2, column=2, pady=10, padx=(10, 0), sticky="W"
         )
         self.file_options_frame.configure(width=200, height=120)
         self.file_options_frame.grid_propagate(False)
@@ -209,13 +260,6 @@ class RunWindow:
             main_frame, style="ButtonFrame.TFrame", padding="10"
         )
         self.button_frame.grid(row=4, column=0, columnspan=3, pady=10)
-        
-        # Configure grid weights
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(0, weight=1)
-        main_frame.columnconfigure(1, weight=0)
-        main_frame.columnconfigure(2, weight=1)
 
         # Populate the frames with options based on the config variables
         self.populate_options()

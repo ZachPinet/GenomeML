@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 
 
@@ -37,3 +38,14 @@ def configure_style():
     style.configure(style_name, background='#00173c')
 
     return style_name
+
+
+# This handles mouse wheel scrolling for canvas movement.
+def on_mousewheel(canvas, event):
+    current_top = canvas.canvasy(0)
+    scroll_amount = int(-1*(event.delta/120))
+
+    if scroll_amount < 0 and current_top <= 0:
+        return
+    
+    canvas.yview_scroll(scroll_amount, "units")
