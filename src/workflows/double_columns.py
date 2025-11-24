@@ -79,7 +79,7 @@ def double_columns(
         print(f"SMSE: {smse:.4f}, Correlation: {correlation:.4f}")
 
         # Log BIC score (new line)
-        run_details = f"file_num={train_file},file_num2={test_file}"
+        run_details = f"train_file={train_file},test_file={test_file}"
         log_bic_score(y_test, predictions, model, scenario_name, run_details)
         
         # Save results

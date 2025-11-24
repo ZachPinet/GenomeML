@@ -23,31 +23,34 @@ def run_training():
     columns_dir = cwd / 'inputs' / 'columns'
     seq_file = cwd / 'inputs' / 'seqs.fa'
     
-    # Get and load seq file and value files
-    values_file = sorted(columns_dir.glob("*.txt"))[config.FILE_NUM - 1]
+    # Get and load seq file and value files (convert 1-indexed config to 0-indexed array)
+    values_file = sorted(columns_dir.glob("*.txt"))[config.SINGLE_FILE_NUM - 1]
     x, y = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
         
     # Prepare files for detect_outliers() function
     col_name = values_file.name[:-4]
-    output_file = cwd / 'outputs' / 'outliers.txt'
-    pct_file = cwd / 'outputs' / 'outlier_percents.txt'
+    outputs_dir = cwd / 'outputs'
+    outputs_dir.mkdir(exist_ok=True)  # Ensure outputs directory exists
+    output_file = outputs_dir / 'outliers.txt'
+    pct_file = outputs_dir / 'outlier_percents.txt'
 
     print(config.DOUBLE_TRAIN_FILE)
-    print(config.FILE_NUM)
-    print(config.FILE_NUM2)
+    print(config.SINGLE_FILE_NUM)
+    print(config.RANGE_START_FILE_NUM)
+    print(config.RANGE_END_FILE_NUM)
 
     # Test and train on one column's values only
     if config.DO_SINGLE_COLUMN:
         print("Single column mode enabled.")
 
-        for i in range(config.FILE_NUM, config.FILE_NUM2 + 1):
+        for i in range(config.RANGE_START_FILE_NUM, config.RANGE_END_FILE_NUM + 1):
             # Reset seeds for identical model behavior each iteration
             random.seed(config.RANDOM_SEED)
             np.random.seed(config.RANDOM_SEED)
             tf.random.set_seed(config.RANDOM_SEED)
 
-            curr_file = i
-            values_file = sorted(columns_dir.glob("*.txt"))[curr_file]
+            # Convert 1-indexed to 0-indexed for array access
+            values_file = sorted(columns_dir.glob("*.txt"))[i - 1]
             x, y = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
 
             single_column(
@@ -57,9 +60,9 @@ def run_training():
                 show_bounds=config.SHOW_BOUNDS, 
                 std_multiplier=config.STD_MULTIPLIER, 
                 frac=config.FRAC, 
-                output_file="outliers.txt", 
-                pct_file="outliers_pct.txt", 
-                mode=config.MODE
+                output_file=output_file, 
+                pct_file=pct_file, 
+                mode=config.OUTLIER_MODE
             )
 
             if config.DO_RANGE == False:
@@ -68,7 +71,7 @@ def run_training():
     # Use PCA on all columns
     elif config.DO_PCA:
         print("PCA mode enabled - loading full dataset.")
-        values_file = sorted(columns_dir.glob("*.txt"))[config.FILE_NUM]
+        values_file = sorted(columns_dir.glob("*.txt"))[config.SINGLE_FILE_NUM - 1]
         x, _ = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
         y_raw = load_all_columns(columns_dir, values_file, config.MAX_SEQS)
 
@@ -81,9 +84,9 @@ def run_training():
             show_bounds=config.SHOW_BOUNDS, 
             std_multiplier=config.STD_MULTIPLIER, 
             frac=config.FRAC, 
-            output_file="outliers.txt", 
-            pct_file="outliers_pct.txt", 
-            mode=config.MODE, 
+            output_file=output_file, 
+            pct_file=pct_file, 
+            mode=config.OUTLIER_MODE, 
             do_pca=config.DO_PCA
         )
     
@@ -91,14 +94,14 @@ def run_training():
     elif config.DO_ENSEMBLE:
         print("Ensemble mode enabled.")
 
-        for i in range(config.FILE_NUM, config.FILE_NUM2 + 1):
+        for i in range(config.RANGE_START_FILE_NUM, config.RANGE_END_FILE_NUM + 1):
             # Reset seeds for identical model behavior each iteration
             random.seed(config.RANDOM_SEED)
             np.random.seed(config.RANDOM_SEED)
             tf.random.set_seed(config.RANDOM_SEED)
 
-            curr_file = i
-            values_file = sorted(columns_dir.glob("*.txt"))[curr_file]
+            # Convert 1-indexed to 0-indexed for array access
+            values_file = sorted(columns_dir.glob("*.txt"))[i - 1]
             x, y = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
 
             ensemble(
@@ -109,9 +112,9 @@ def run_training():
                 show_bounds=config.SHOW_BOUNDS, 
                 std_multiplier=config.STD_MULTIPLIER, 
                 frac=config.FRAC, 
-                output_file="outliers.txt", 
-                pct_file="outliers_pct.txt", 
-                mode=config.MODE
+                output_file=output_file, 
+                pct_file=pct_file, 
+                mode=config.OUTLIER_MODE
             )
 
             if config.DO_RANGE == False:
@@ -134,13 +137,13 @@ def run_training():
             seq_file, double_train_file, max_seqs=config.MAX_SEQS
         )
 
-        for i in range(config.FILE_NUM, config.FILE_NUM2 + 1):
+        for i in range(config.RANGE_START_FILE_NUM, config.RANGE_END_FILE_NUM + 1):
             # Reset seeds before loading testing data
             random.seed(config.RANDOM_SEED)
             np.random.seed(config.RANDOM_SEED)
             tf.random.set_seed(config.RANDOM_SEED)
 
-            # Use the same shuffling as training data
+            # Use the same shuffling as training data (convert 1-indexed to 0-indexed)
             values_file2 = sorted(columns_dir.glob("*.txt"))[i - 1]
             _, y_test = load_data(
                 seq_file, values_file2, max_seqs=config.MAX_SEQS
@@ -154,9 +157,9 @@ def run_training():
                 show_bounds=config.SHOW_BOUNDS, 
                 std_multiplier=config.STD_MULTIPLIER, 
                 frac=config.FRAC, 
-                output_file="outliers.txt", 
-                pct_file="outliers_pct.txt", 
-                mode=config.MODE
+                output_file=output_file, 
+                pct_file=pct_file, 
+                mode=config.OUTLIER_MODE
             )
 
             if config.DO_RANGE == False:

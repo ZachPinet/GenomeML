@@ -1,6 +1,7 @@
 # outlier_pie_chart.py
 import matplotlib.pyplot as plt
 from collections import Counter
+from pathlib import Path
 
 
 # This returns the # of times each sequence has been an outlier.
@@ -46,7 +47,7 @@ def make_pie_chart(outlier_counts, total_seq_count):
 
 # This is the main function.
 def main():
-    outliers_file = 'outliers.txt'
+    outliers_file = Path.cwd() / 'outputs' / 'outliers.txt'
     total_seq_count = 285250
     outlier_counts = load_outlier_counts(outliers_file)
     make_pie_chart(outlier_counts, total_seq_count)

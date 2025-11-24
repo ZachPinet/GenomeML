@@ -3,8 +3,9 @@ from pathlib import Path
 
 # Configuration settings for GenomeML
 DEFAULT_SETTINGS = {
-    'FILE_NUM': 0,
-    'FILE_NUM2': 0,
+    'SINGLE_FILE_NUM': 1,
+    'RANGE_START_FILE_NUM': 1,
+    'RANGE_END_FILE_NUM': 1,
     'DO_RANGE': False,
     'DO_DOUBLE_COLUMNS': False,
     'DO_ENSEMBLE': False,
@@ -22,7 +23,7 @@ DEFAULT_SETTINGS = {
     'SHOW_BOUNDS': True,
     'STD_MULTIPLIER': 2,
     'FRAC': 0.3,  # 0-1. Affects smoothness and sensitivity of curve
-    'MODE': 'both',  # Log outliers. 'simple', 'complex', 'both', 'off'
+    'OUTLIER_MODE': 'both',  # Log outliers. 'simple', 'complex', 'both', 'off'
     'RANDOM_SEED': 42,
     'WINDOW': True,
 }

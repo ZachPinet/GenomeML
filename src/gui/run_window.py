@@ -63,9 +63,13 @@ class RunWindow:
 
     # Get the local config values and load them into the GUI variables
     def load_current_config(self):
-        # Set file selections, convert to 1-indexed
-        self.start_file_var.set(config.FILE_NUM)
-        self.end_file_var.set(config.FILE_NUM2)
+        # Set file selections based on mode
+        if config.DO_RANGE:
+            self.start_file_var.set(config.RANGE_START_FILE_NUM)
+            self.end_file_var.set(config.RANGE_END_FILE_NUM)
+        else:
+            self.start_file_var.set(config.SINGLE_FILE_NUM)
+            self.end_file_var.set(config.SINGLE_FILE_NUM)
 
         # Set file mode
         self.file_mode_var.set("range" if config.DO_RANGE else "single")
@@ -91,7 +95,7 @@ class RunWindow:
         self.train_percentage_var.set(config.TRAIN_PERCENTAGE)
         self.make_plot_var.set(config.MAKE_PLOT)
         self.show_bounds_var.set(config.SHOW_BOUNDS)
-        self.mode_var.set(config.MODE)
+        self.mode_var.set(config.OUTLIER_MODE)
         self.random_seed_var.set(config.RANDOM_SEED)
     
     # Save current GUI values to config_local.txt
@@ -108,15 +112,17 @@ class RunWindow:
         # Determine file mode
         do_range = self.file_mode_var.get() == "range"
         
-        # Get file numbers (convert back to 0-indexed)
-        file_num = self.start_file_var.get()
-        file_num2 = self.end_file_var.get()
+        # Get file numbers - store as 1-indexed for user-friendliness
+        single_file_num = self.start_file_var.get() if not do_range else config.SINGLE_FILE_NUM
+        range_start = self.start_file_var.get() if do_range else config.RANGE_START_FILE_NUM
+        range_end = self.end_file_var.get() if do_range else config.RANGE_END_FILE_NUM
         double_train_file = self.double_train_file_var.get()
         
         config_lines = [
             "# GenomeML Configuration Overrides",
-            f"FILE_NUM={file_num}",
-            f"FILE_NUM2={file_num2}",
+            f"SINGLE_FILE_NUM={single_file_num}",
+            f"RANGE_START_FILE_NUM={range_start}",
+            f"RANGE_END_FILE_NUM={range_end}",
             f"DO_RANGE={do_range}",
             f"DO_DOUBLE_COLUMNS={do_double}",
             f"DO_ENSEMBLE={do_ensemble}",
@@ -130,7 +136,7 @@ class RunWindow:
             f"TRAIN_PERCENTAGE={self.train_percentage_var.get()}",
             f"MAKE_PLOT={self.make_plot_var.get()}",
             f"SHOW_BOUNDS={self.show_bounds_var.get()}",
-            f"MODE={self.mode_var.get()}",
+            f"OUTLIER_MODE={self.mode_var.get()}",
             f"RANDOM_SEED={self.random_seed_var.get()}",
         ]
         
@@ -525,11 +531,14 @@ class RunWindow:
                 )
                 file_dropdown.grid(row=1, column=0, sticky=tk.W)
 
-                # Set default selection to the first file
-                if file_options:
+                # Restore from config values
+                single_file = config.SINGLE_FILE_NUM
+                if 1 <= single_file <= len(file_options):
+                    file_dropdown.set(file_options[single_file - 1])
+                    self.start_file_var.set(single_file)
+                    self.end_file_var.set(single_file)
+                elif file_options:
                     file_dropdown.set(file_options[0])
-
-                    # Update the start and end vars when default is set
                     self.start_file_var.set(1)
                     self.end_file_var.set(1)
 
@@ -550,6 +559,18 @@ class RunWindow:
             )
             
             max_files = len(self.get_column_files())
+            
+            # Restore from config values
+            range_start = config.RANGE_START_FILE_NUM
+            range_end = config.RANGE_END_FILE_NUM
+            if 1 <= range_start <= max_files:
+                self.start_file_var.set(range_start)
+            else:
+                self.start_file_var.set(1)
+            if 1 <= range_end <= max_files:
+                self.end_file_var.set(range_end)
+            else:
+                self.end_file_var.set(1)
             
             # Start of the range
             ttk.Label(
@@ -646,7 +667,6 @@ class RunWindow:
     
     # Return to the main menu and close this window
     def back_to_menu(self):
-        self.save_config_to_file()
         print("Window closing by return to main menu.")
         self.root.destroy()
         self.parent_menu.show()

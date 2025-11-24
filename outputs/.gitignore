@@ -8,3 +8,5 @@
 !graphs/
 !outliers/
 !run_data/
+outlier_percents.txt
+outliers.txt
