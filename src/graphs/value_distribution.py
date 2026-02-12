@@ -45,8 +45,8 @@ def plot_distribution(values, file_name, save_dir):
 
 # This is main.
 def main():
-    columns_dir = Path.cwd() / 'columns'
-    downloads_dir = Path.home() / 'Downloads'   # save imgs to downloads
+    columns_dir = Path.cwd() / 'inputs' / 'columns'
+    save_dir = Path.home() / 'outputs' / 'graphs'
 
     # Ensure the 'columns' folder exists
     if not columns_dir.exists():
@@ -56,7 +56,7 @@ def main():
     # Loop through all .txt files in the columns directory
     for file_path in sorted(columns_dir.glob("*.txt")):
         values = read_values(file_path)
-        plot_distribution(values, file_path.name, downloads_dir)
+        plot_distribution(values, file_path.name, save_dir)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ from src.outliers import detect_outliers
 
 # This trains on and predicts values for one specific column, no PCA.
 def single_column(
-        x, y, kfold, col_name, show_bounds, 
+        x, y, batch, kfold, col_name, show_bounds, 
         std_multiplier, frac, output_file, pct_file, mode
 ):
     if kfold:
@@ -33,17 +33,27 @@ def single_column(
         # Prepare data for the model
         x_train, x_test = x[train_idx], x[test_idx]
         y_train, y_test = y[train_idx], y[test_idx]
+        batch_train, batch_test = batch[train_idx], batch[test_idx]
 
         model = build_model((500, 4))
 
         # Train the model
-        model.fit(
-            x_train, y_train, 
-            epochs=10, batch_size=32, 
-            validation_data=(x_test, y_test), 
-            verbose=config.VERBOSE
-        )
-        predictions = model.predict(x_test, verbose=0).flatten()
+        if config.USE_BATCH_CORRECTION:
+            model.fit(
+                [x_train, batch_train], y_train, 
+                epochs=10, batch_size=32, 
+                validation_data=([x_test, batch_test], y_test), 
+                verbose=config.VERBOSE
+            )
+            predictions = model.predict([x_test, batch_test], verbose=0).flatten()
+        else:
+            model.fit(
+                x_train, y_train, 
+                epochs=10, batch_size=32, 
+                validation_data=(x_test, y_test), 
+                verbose=config.VERBOSE
+            )
+            predictions = model.predict(x_test, verbose=0).flatten()
 
         # Calculate and print SMSE
         smse = np.sqrt(mean_squared_error(y_test, predictions))

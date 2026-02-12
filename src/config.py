@@ -26,6 +26,7 @@ DEFAULT_SETTINGS = {
     'OUTLIER_MODE': 'both',  # Log outliers. 'simple', 'complex', 'both', 'off'
     'RANDOM_SEED': 42,
     'WINDOW': True,
+    'USE_BATCH_CORRECTION': True,
 }
 
 

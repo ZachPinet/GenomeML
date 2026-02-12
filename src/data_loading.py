@@ -1,6 +1,19 @@
 import numpy as np
 
 
+# Get batch ID from filename (0=BroadHistone, 1=OpenChromChip, 2=UwTfbs)
+def get_batch_id(filename):
+    name = filename.lower()
+    if 'broadhistone' in name:
+        return 0
+    elif 'openchromchip' in name:
+        return 1
+    elif 'uwtfbs' in name:
+        return 2
+    else:
+        return -1  # Unknown batch
+
+
 # This one-hot encodes any sequence and returns it.
 def one_hot_encode(sequence):
     mapping = {
@@ -45,9 +58,15 @@ def load_data(fasta_file, values_file, max_seqs):
 
     # One-hot encode the sequences to finalize the pairs
     final_sequences = [one_hot_encode(seq) for (seq, val) in final_pairs]
+    final_seq_array = np.array(final_sequences)
     final_values = [val for (seq, val) in final_pairs]
+    final_val_array = np.array(final_values, dtype=np.float32)
 
-    return np.array(final_sequences), np.array(final_values, dtype=np.float32)
+    # Extract batch ID from filename
+    batch_id = get_batch_id(str(values_file))
+    batch_ids = np.full(len(final_sequences), batch_id, dtype=np.int32)
+    
+    return final_seq_array, final_val_array, batch_ids
 
 
 # This loads every value file. Can use all of them or just one.

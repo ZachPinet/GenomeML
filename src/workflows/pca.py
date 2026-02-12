@@ -14,7 +14,7 @@ from src.outliers import detect_outliers
 
 # This applies PCA to values and predicts values.
 def pca_values(
-        x, y_raw, pca_components, show_bounds, 
+        x, y_raw, batch, pca_components, show_bounds, 
         std_multiplier, frac, output_file, pct_file, mode, do_pca
 ):
     print(f"Loaded {x.shape[0]} sequences and {y_raw.shape[0]} value rows")
@@ -39,20 +39,29 @@ def pca_values(
     for i in range(pca_components):
         print(f"\nTraining for PCA Component {i}")
         y_component = y_all_scaled[:, i]
-        x_train, x_test, y_train, y_test = train_test_split(
-            x, y_component, test_size=0.2, random_state=42
+        x_train, x_test, y_train, y_test, batch_train, batch_test = train_test_split(
+            x, y_component, batch, test_size=0.2, random_state=42
         )
 
         # Build, train, and test model
-        model = build_model((x.shape[1], x.shape[2]), 1)  # (500, 4)
-        model.fit(
-            x_train, y_train, 
-            epochs=10, batch_size=32, 
-            validation_data=(x_test, y_test), 
-            verbose=config.VERBOSE
-        )
+        model = build_model((x.shape[1], x.shape[2]), output_dim=1)  # (500, 4)
         
-        predictions = model.predict(x_test, verbose=0).flatten()
+        if config.USE_BATCH_CORRECTION:
+            model.fit(
+                [x_train, batch_train], y_train, 
+                epochs=10, batch_size=32, 
+                validation_data=([x_test, batch_test], y_test), 
+                verbose=config.VERBOSE
+            )
+            predictions = model.predict([x_test, batch_test], verbose=0).flatten()
+        else:
+            model.fit(
+                x_train, y_train, 
+                epochs=10, batch_size=32, 
+                validation_data=(x_test, y_test), 
+                verbose=config.VERBOSE
+            )
+            predictions = model.predict(x_test, verbose=0).flatten()
 
         # Transform predictions back to original scale (original units)
         #predictions = scaler_pca.inverse_transform(predictions)

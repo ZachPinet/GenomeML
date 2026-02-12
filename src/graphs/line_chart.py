@@ -2,6 +2,10 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
+'''
+No current use!
+'''
+
 
 # Creates a line chart from given values and labels
 def create_line_chart(values, labels, ylabel="Values", title="Line Chart"):

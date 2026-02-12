@@ -10,8 +10,7 @@ TRACKED_LINE = 3  # Line number to track and highlight (1-indexed)
 
 # Files to analyze (1 or 2 files only)
 RUN_DATA_FILES = [
-    'run_data1.txt',
-    'run_data2.txt',
+    'run_data1.txt'
 ]
 
 

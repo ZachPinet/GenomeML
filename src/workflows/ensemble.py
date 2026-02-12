@@ -31,7 +31,7 @@ def is_compatible(train_pct, data_splits):
 
 # This ensemble approach averages predictions from multiple models.
 def ensemble(
-        x, y, train_percentage, data_splits, col_name, show_bounds, 
+        x, y, batch, train_percentage, data_splits, col_name, show_bounds, 
         std_multiplier, frac, output_file, pct_file, mode
 ):
     # Train on overlapping continuous segments, test on full dataset
@@ -98,14 +98,23 @@ def ensemble(
         
         x_train = x[train_indices]
         y_train = y[train_indices]
+        batch_train = batch[train_indices]
         
-        model = build_model((500, 4), 1)
-        model.fit(x_train, y_train, 
-                  epochs=10, batch_size=32, 
-                  verbose=config.VERBOSE
-        )
+        model = build_model((500, 4), output_dim=1)
         
-        full_predictions = model.predict(x, verbose=0).flatten()
+        if config.USE_BATCH_CORRECTION:
+            model.fit([x_train, batch_train], y_train, 
+                      epochs=10, batch_size=32, 
+                      verbose=config.VERBOSE
+            )
+            full_predictions = model.predict([x, batch], verbose=0).flatten()
+        else:
+            model.fit(x_train, y_train, 
+                      epochs=10, batch_size=32, 
+                      verbose=config.VERBOSE
+            )
+            full_predictions = model.predict(x, verbose=0).flatten()
+        
         all_predictions.append(full_predictions)
 
     print(f"Averaging predictions from {n_models} models...")

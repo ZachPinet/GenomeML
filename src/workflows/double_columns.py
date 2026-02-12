@@ -10,8 +10,8 @@ from src.utils import log_bic_score
 
 # This trains on half of one column and tests on half of another.
 def double_columns(
-        x, y, y2, train_file, test_file, train_pctg, show_bounds, 
-        std_multiplier, frac, output_file, pct_file, mode
+        x, y, y2, batch, batch_test, train_file, test_file, train_pctg, 
+        show_bounds, std_multiplier, frac, output_file, pct_file, mode
 ):
     
     # Validate train_percentage
@@ -41,6 +41,8 @@ def double_columns(
     x_train, x_test = x[train_indices], x[test_indices]
     col1A, col1B = y[train_indices], y[test_indices]  # A = train, B = test
     col2A, col2B = y2[train_indices], y2[test_indices]
+    batch_train = batch[train_indices]  # Batch IDs from training file
+    batch_test_split = batch_test[test_indices]  # Batch IDs from test file
     
     print(f"Train size: {len(x_train):,} ({len(x_train)/len(x)*100:.1f}%)")
     print(f"Test size: {len(x_test):,} ({len(x_test)/len(x)*100:.1f}%)")
@@ -65,13 +67,20 @@ def double_columns(
         print(f"Training {scenario_name}")
         
         # Build, train, and test model
-        model = build_model((500, 4), 1)
-        model.fit(x_train, y_train, 
-                  epochs=10, batch_size=32, 
-                  verbose=config.VERBOSE
-        )
+        model = build_model((500, 4), output_dim=1)
         
-        predictions = model.predict(x_test, verbose=0).flatten()
+        if config.USE_BATCH_CORRECTION:
+            model.fit([x_train, batch_train], y_train, 
+                      epochs=10, batch_size=32, 
+                      verbose=config.VERBOSE
+            )
+            predictions = model.predict([x_test, batch_test_split], verbose=0).flatten()
+        else:
+            model.fit(x_train, y_train, 
+                      epochs=10, batch_size=32, 
+                      verbose=config.VERBOSE
+            )
+            predictions = model.predict(x_test, verbose=0).flatten()
         
         # Calculate metrics
         smse = np.sqrt(mean_squared_error(y_test, predictions))

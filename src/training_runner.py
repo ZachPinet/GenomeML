@@ -18,16 +18,17 @@ def run_training():
     np.random.seed(config.RANDOM_SEED)
     tf.random.set_seed(config.RANDOM_SEED)
 
-    # Access 'columns' folder which holds the value files
+    # Access 'columns' folder which holds the value files.
     cwd = Path.cwd()
     columns_dir = cwd / 'inputs' / 'columns'
     seq_file = cwd / 'inputs' / 'seqs.fa'
+    max_seqs = config.MAX_SEQS
     
     # Get and load seq file and value files (convert 1-indexed config to 0-indexed array)
     values_file = sorted(columns_dir.glob("*.txt"))[config.SINGLE_FILE_NUM - 1]
-    x, y = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
+    x, y, batch = load_data(seq_file, values_file, max_seqs)
         
-    # Prepare files for detect_outliers() function
+    # Prepare files for detect_outliers() function.
     col_name = values_file.name[:-4]
     outputs_dir = cwd / 'outputs'
     outputs_dir.mkdir(exist_ok=True)  # Ensure outputs directory exists
@@ -51,10 +52,10 @@ def run_training():
 
             # Convert 1-indexed to 0-indexed for array access
             values_file = sorted(columns_dir.glob("*.txt"))[i - 1]
-            x, y = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
+            x, y, batch = load_data(seq_file, values_file, max_seqs)
 
             single_column(
-                x, y, 
+                x, y, batch, 
                 kfold=config.KFOLD, 
                 col_name=col_name + 1, 
                 show_bounds=config.SHOW_BOUNDS, 
@@ -72,14 +73,14 @@ def run_training():
     elif config.DO_PCA:
         print("PCA mode enabled - loading full dataset.")
         values_file = sorted(columns_dir.glob("*.txt"))[config.SINGLE_FILE_NUM - 1]
-        x, _ = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
+        x, _, batch = load_data(seq_file, values_file, max_seqs)
         y_raw = load_all_columns(columns_dir, values_file, config.MAX_SEQS)
 
         if config.TRANSPOSE:
             print("Transposed mode not integrated. Running normal PCA")
         
         pca_values(
-            x, y_raw, 
+            x, y_raw, batch, 
             pca_components=config.PCA_COMPONENTS, 
             show_bounds=config.SHOW_BOUNDS, 
             std_multiplier=config.STD_MULTIPLIER, 
@@ -102,10 +103,10 @@ def run_training():
 
             # Convert 1-indexed to 0-indexed for array access
             values_file = sorted(columns_dir.glob("*.txt"))[i - 1]
-            x, y = load_data(seq_file, values_file, max_seqs=config.MAX_SEQS)
+            x, y, batch = load_data(seq_file, values_file, max_seqs)
 
             ensemble(
-                x, y, 
+                x, y, batch, 
                 train_percentage=config.TRAIN_PERCENTAGE, 
                 data_splits=config.DATA_SPLITS, 
                 col_name=col_name + 1, 
@@ -133,9 +134,7 @@ def run_training():
         double_train_file = sorted(
             columns_dir.glob("*.txt")
         )[config.DOUBLE_TRAIN_FILE - 1]
-        x, y_train = load_data(
-            seq_file, double_train_file, max_seqs=config.MAX_SEQS
-        )
+        x, y_train, batch = load_data(seq_file, double_train_file, max_seqs)
 
         for i in range(config.RANGE_START_FILE_NUM, config.RANGE_END_FILE_NUM + 1):
             # Reset seeds before loading testing data
@@ -145,12 +144,10 @@ def run_training():
 
             # Use the same shuffling as training data (convert 1-indexed to 0-indexed)
             values_file2 = sorted(columns_dir.glob("*.txt"))[i - 1]
-            _, y_test = load_data(
-                seq_file, values_file2, max_seqs=config.MAX_SEQS
-            )
+            _, y_test, batch_test = load_data(seq_file, values_file2, max_seqs)
 
             double_columns(
-                x, y_train, y_test, 
+                x, y_train, y_test, batch, batch_test,
                 train_file=config.DOUBLE_TRAIN_FILE, 
                 test_file=i, 
                 train_pctg=config.TRAIN_PERCENTAGE, 
