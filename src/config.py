@@ -12,7 +12,6 @@ DEFAULT_SETTINGS = {
     'DO_PCA': False,
     'DO_SINGLE_COLUMN': True,
     'KFOLD': False,
-    'TRANSPOSE': False,
     'PCA_COMPONENTS': 4,
     'DATA_SPLITS': 10,
     'DOUBLE_TRAIN_FILE': 0,
