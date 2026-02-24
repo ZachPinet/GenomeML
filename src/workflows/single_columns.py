@@ -10,8 +10,7 @@ from src.outliers import detect_outliers
 
 # This trains on and predicts values for one specific column, no PCA.
 def single_column(
-        x, y, batch, kfold, col_name, show_bounds, 
-        std_multiplier, frac, output_file, pct_file, mode
+        x, y, batch, kfold, col_name, output_file, pct_file, mode
 ):
     if kfold:
         print(f"PCA disabled - using K-fold cross-validation on one file.")
@@ -65,15 +64,13 @@ def single_column(
         if kfold:
             # Plot graph for individual fold
             plot_graph(
-                y_test, predictions, f"{col_name} - Fold {fold}", smse, 
-                show_bounds, std_multiplier, frac
+                y_test, predictions, f"{col_name} - Fold {fold}", smse
             )
 
             # Detect and log outliers
             detect_outliers(
                 x_test, y_test, predictions, output_file, 
-                pct_file, f"{col_name} - Fold {fold}", 
-                std_multiplier, frac, mode
+                pct_file, f"{col_name} - Fold {fold}", mode
             )
 
             # Store for the combined graph
@@ -86,12 +83,11 @@ def single_column(
         else:
             # Graph and outliers for single run and end loop
             plot_graph(
-                y_test, predictions, col_name, smse, show_bounds, 
-                std_multiplier, frac
+                y_test, predictions, col_name, smse
             )
             detect_outliers(
                 x_test, y_test, predictions, output_file, pct_file, 
-                col_name, std_multiplier, frac, mode
+                col_name, mode
             )
 
             return
@@ -100,12 +96,11 @@ def single_column(
     total_smse = np.sqrt(mean_squared_error(all_y_true, all_y_pred))
     plot_graph(
         np.array(all_y_true), np.array(all_y_pred), 
-        f"{col_name} - Combined 5-Fold", total_smse, show_bounds, 
-        std_multiplier, frac
+        f"{col_name} - Combined 5-Fold", total_smse
     )
 
     # Final outlier after all folds
     detect_outliers(
         all_seqs, all_y_true, all_y_pred, output_file, pct_file, 
-        f"{col_name} - Combined", std_multiplier, frac, mode
+        f"{col_name} - Combined", mode
     )

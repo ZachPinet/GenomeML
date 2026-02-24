@@ -6,7 +6,7 @@
 !components/
 !ensemble/
 !graphs/
-!outliers/
+!simple_outliers/
 !run_data/
 outlier_percents.txt
 outliers.txt

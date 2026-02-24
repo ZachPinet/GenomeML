@@ -14,8 +14,7 @@ from src.outliers import detect_outliers
 
 # This applies PCA to values and predicts values.
 def pca_values(
-        x, y_raw, batch, pca_components, show_bounds, 
-        std_multiplier, frac, output_file, pct_file, mode, do_pca
+        x, y_raw, batch, pca_components, output_file, pct_file, mode
 ):
     print(f"Loaded {x.shape[0]} sequences and {y_raw.shape[0]} value rows")
     
@@ -74,11 +73,7 @@ def pca_values(
         # Save results
         print(f"Creating graph and outlier files...")
         col_name = f"Val-PCA-Component-{i+1}"
-        plot_graph(
-            y_test, predictions, col_name, smse, show_bounds, 
-            std_multiplier, frac, do_pca
-        )
+        plot_graph(y_test, predictions, col_name, smse)
         detect_outliers(
-            x_test, y_test, predictions, output_file, pct_file, 
-            col_name, std_multiplier, frac, mode, do_pca
+            x_test, y_test, predictions, output_file, pct_file, col_name, mode
         )

@@ -56,9 +56,6 @@ def run_training():
                 x, y, batch, 
                 kfold=config.KFOLD, 
                 col_name=col_name, 
-                show_bounds=config.SHOW_BOUNDS, 
-                std_multiplier=config.STD_MULTIPLIER, 
-                frac=config.FRAC, 
                 output_file=output_file, 
                 pct_file=pct_file, 
                 mode=config.OUTLIER_MODE
@@ -90,13 +87,9 @@ def run_training():
             pca_values(
                 x, y_raw, batch, 
                 pca_components=config.PCA_COMPONENTS, 
-                show_bounds=config.SHOW_BOUNDS, 
-                std_multiplier=config.STD_MULTIPLIER, 
-                frac=config.FRAC, 
                 output_file=output_file, 
                 pct_file=pct_file, 
-                mode=config.OUTLIER_MODE, 
-                do_pca=config.DO_PCA
+                mode=config.OUTLIER_MODE
             )
 
             if config.DO_RANGE == False:
@@ -128,9 +121,6 @@ def run_training():
                 train_percentage=config.TRAIN_PERCENTAGE, 
                 data_splits=config.DATA_SPLITS, 
                 col_name=col_name, 
-                show_bounds=config.SHOW_BOUNDS, 
-                std_multiplier=config.STD_MULTIPLIER, 
-                frac=config.FRAC, 
                 output_file=output_file, 
                 pct_file=pct_file, 
                 mode=config.OUTLIER_MODE
@@ -175,9 +165,6 @@ def run_training():
                 train_file=config.DOUBLE_TRAIN_FILE, 
                 test_file=i, 
                 train_pctg=config.TRAIN_PERCENTAGE, 
-                show_bounds=config.SHOW_BOUNDS, 
-                std_multiplier=config.STD_MULTIPLIER, 
-                frac=config.FRAC, 
                 output_file=output_file, 
                 pct_file=pct_file, 
                 mode=config.OUTLIER_MODE

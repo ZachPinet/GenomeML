@@ -11,7 +11,7 @@ from src.utils import log_bic_score
 # This trains on half of one column and tests on half of another.
 def double_columns(
         x, y, y2, batch, batch_test, train_file, test_file, train_pctg, 
-        show_bounds, std_multiplier, frac, output_file, pct_file, mode
+        output_file, pct_file, mode
 ):
     
     # Validate train_percentage
@@ -94,10 +94,9 @@ def double_columns(
         # Save results
         print(f"Creating graph and outlier files...")
         plot_graph(
-            y_test, predictions, scenario_name, smse, show_bounds, 
-            std_multiplier, frac
+            y_test, predictions, scenario_name, smse
         )
         detect_outliers(
             x_test, y_test, predictions, output_file, pct_file, 
-            scenario_name, std_multiplier, frac, mode
+            scenario_name, mode
         )

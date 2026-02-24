@@ -7,12 +7,11 @@ import numpy as np
 from scipy.stats import gaussian_kde
 from statsmodels.nonparametric.smoothers_lowess import lowess
 
+from src import config
+
 
 # This makes a heatmap scatterplot with the data.
-def plot_graph(
-        y_true, y_pred, col_name, smse, show_bounds, 
-        std_multiplier, frac, do_pca=False
-):
+def plot_graph(y_true, y_pred, col_name, smse):
     plt.figure(figsize=(10, 6))
 
     # Calculate Pearson correlation for the graph title
@@ -27,9 +26,9 @@ def plot_graph(
     plt.colorbar(label="Density")
 
     # Shows the LOESS curve and boundary lines on the graph
-    if show_bounds:
-        # Calculate and plot the LOESS curve
-        loess_result = lowess(y_pred, y_true, frac=frac)
+    if config.SHOW_BOUNDS == True:
+        # Calculate and plot the LOESS curve.
+        loess_result = lowess(y_pred, y_true, frac=config.FRAC)
         x_loess, y_loess = loess_result[:, 0], loess_result[:, 1]
 
         plt.plot(x_loess, y_loess, color='black', linewidth=1, label='LOESS')
@@ -39,7 +38,8 @@ def plot_graph(
         residuals = y_pred - loess_interp
         std_dev = np.std(residuals)
 
-        # Calculate and plot the bounds 
+        # Calculate and plot the bounds.
+        std_multiplier = config.STD_MULTIPLIER
         upper = y_loess + std_multiplier * std_dev
         lower = y_loess - std_multiplier * std_dev
 
@@ -53,8 +53,13 @@ def plot_graph(
         )
 
     # Labels
-    xlabel = 'True Values (PCA)' if do_pca else 'True Values'
-    ylabel = 'Predicted Values (PCA)' if do_pca else 'Predicted Values'
+    if config.DO_PCA == True:
+        xlabel = 'True Values (PCA)'
+        ylabel = 'Predicted Values (PCA)'
+    else:
+        xlabel = 'True Values'
+        ylabel = 'Predicted Values'
+
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(f'{col_name} (r={corr:.3f}) (SMSE: {smse:.4f})', fontsize=11)
