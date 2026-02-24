@@ -1,4 +1,3 @@
-import importlib
 import threading
 
 import tkinter as tk
@@ -641,7 +640,7 @@ class RunWindow:
     # Save selected options and start the training process
     def start_training(self):
         self.save_config_to_file()
-        importlib.reload(config)
+        config.reload_config()
 
         # Set class variable to indicate training started
         RunWindow._training_in_progress = True

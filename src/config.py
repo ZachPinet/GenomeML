@@ -1,34 +1,6 @@
 from pathlib import Path
 
 
-# These are the configuration settings for GenomeML.
-DEFAULT_SETTINGS = {
-    'SINGLE_FILE_NUM': 1,
-    'RANGE_START_FILE_NUM': 1,
-    'RANGE_END_FILE_NUM': 1,
-    'DO_RANGE': False,
-    'DO_DOUBLE_COLUMNS': False,
-    'DO_ENSEMBLE': False,
-    'DO_PCA': False,
-    'DO_SINGLE_COLUMN': True,
-    'KFOLD': False,
-    'PCA_COMPONENTS': 4,
-    'DATA_SPLITS': 10,
-    'DOUBLE_TRAIN_FILE': 0,
-    'MAX_SEQS': 999999,
-    'TRAIN_PERCENTAGE': 50,
-    'VERBOSE': 1,
-    'MAKE_PLOT': True,
-    'SHOW_BOUNDS': True,
-    'STD_MULTIPLIER': 2,
-    'FRAC': 0.3,
-    'OUTLIER_MODE': 'both',
-    'RANDOM_SEED': 42,
-    'WINDOW': True,
-    'USE_BATCH_CORRECTION': True,
-}
-
-
 # Parse string value to appropriate Python type.
 def _parse_value(value_str):
     value_str = value_str.strip()
@@ -54,7 +26,7 @@ def _parse_value(value_str):
 
 
 # Load local configuration overrides from config_local.txt.
-def _load_config_from_file():
+def _load_config_from_file(default_settings):
     config_file = Path(__file__).parent / 'config_local.txt'
     
     if not config_file.exists():
@@ -76,7 +48,7 @@ def _load_config_from_file():
                     key = key.strip()
                     value = _parse_value(value)
                     
-                    if key in DEFAULT_SETTINGS:
+                    if key in default_settings:
                         overrides[key] = value
                     else:
                         print(f"Warning: Unknown config key '{key}'")
@@ -87,9 +59,39 @@ def _load_config_from_file():
     
     return overrides
 
-# Load settings with overrides.
-settings = {**DEFAULT_SETTINGS, **_load_config_from_file()}
 
-# Export as module-level variables for other files' ease of access.
-for key, value in settings.items():
-    globals()[key] = value
+# This reloads config values and updates module-level variables.
+def reload_config():
+    # These are the default configuration settings for GenomeML.
+    default_settings = {
+        'SINGLE_FILE_NUM': 1,
+        'RANGE_START_FILE_NUM': 1,
+        'RANGE_END_FILE_NUM': 1,
+        'DO_RANGE': False,
+        'DO_DOUBLE_COLUMNS': False,
+        'DO_ENSEMBLE': False,
+        'DO_PCA': False,
+        'DO_SINGLE_COLUMN': True,
+        'KFOLD': False,
+        'PCA_COMPONENTS': 4,
+        'DATA_SPLITS': 10,
+        'DOUBLE_TRAIN_FILE': 0,
+        'MAX_SEQS': 999999,
+        'TRAIN_PERCENTAGE': 50,
+        'VERBOSE': 1,
+        'MAKE_PLOT': True,
+        'SHOW_BOUNDS': True,
+        'STD_MULTIPLIER': 2,
+        'FRAC': 0.3,
+        'OUTLIER_MODE': 'both',
+        'RANDOM_SEED': 42,
+        'WINDOW': True,
+        'USE_BATCH_CORRECTION': True,
+    }
+    
+    # Load settings with overrides.
+    settings = {**default_settings, **_load_config_from_file(default_settings)}
+    
+    # Export as module-level variables for other files' ease of access.
+    for key, value in settings.items():
+        globals()[key] = value

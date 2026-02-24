@@ -188,8 +188,6 @@ def run_training():
 
     else:
         print("Error: No training workflow selected!")
-        return False
     
     # After a workflow finishes completely, the program returns here.
     print("Training completed!")
-    return True
