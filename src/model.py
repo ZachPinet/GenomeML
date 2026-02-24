@@ -39,7 +39,7 @@ class BatchCorrectionLayer(tf.keras.layers.Layer):
         batch_gamma = tf.gather(self.gamma, batch_ids)
         batch_beta = tf.gather(self.beta, batch_ids)
         
-        # Batch-specific transformation: output = gamma * features + beta.
+        # Batch-specific transformation.
         corrected = batch_gamma * features + batch_beta
         
         return corrected
@@ -54,10 +54,10 @@ class BatchCorrectionLayer(tf.keras.layers.Layer):
 def build_model(input_shape, output_dim=1, num_batches=3):
     if config.USE_BATCH_CORRECTION:
         # Requires two inputs: sequences and batch IDs.
-        sequence_input = tf.keras.Input(shape=input_shape, name='sequence_input')
-        batch_id_input = tf.keras.Input(shape=(), dtype=tf.int32, name='batch_id_input')
+        seq = tf.keras.Input(shape=input_shape, name='sequence_input')
+        batch = tf.keras.Input(shape=(), dtype=tf.int32, name='batch_id_input')
         
-        x = tf.keras.layers.Conv1D(64, kernel_size=5, activation='relu')(sequence_input)
+        x = tf.keras.layers.Conv1D(64, kernel_size=5, activation='relu')(seq)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.MaxPooling1D(pool_size=2)(x)
         
@@ -69,14 +69,14 @@ def build_model(input_shape, output_dim=1, num_batches=3):
         x = tf.keras.layers.Dropout(0.3)(x)
         
         # Apply batch correction before final dense layers.
-        x = BatchCorrectionLayer(num_batches=num_batches)([x, batch_id_input])
+        x = BatchCorrectionLayer(num_batches=num_batches)([x, batch])
         
         x = tf.keras.layers.Dense(64, activation='relu')(x)
         x = tf.keras.layers.Dropout(0.3)(x)
 
         output = tf.keras.layers.Dense(output_dim, activation='linear')(x)
         
-        model = tf.keras.Model(inputs=[sequence_input, batch_id_input], outputs=output)
+        model = tf.keras.Model(inputs=[seq, batch], outputs=output)
         
     else:
         # Original model without batch correction.
