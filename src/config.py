@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-# Configuration settings for GenomeML
+# These are the configuration settings for GenomeML.
 DEFAULT_SETTINGS = {
     'SINGLE_FILE_NUM': 1,
     'RANGE_START_FILE_NUM': 1,
@@ -21,15 +21,15 @@ DEFAULT_SETTINGS = {
     'MAKE_PLOT': True,
     'SHOW_BOUNDS': True,
     'STD_MULTIPLIER': 2,
-    'FRAC': 0.3,  # 0-1. Affects smoothness and sensitivity of curve
-    'OUTLIER_MODE': 'both',  # Log outliers. 'simple', 'complex', 'both', 'off'
+    'FRAC': 0.3,
+    'OUTLIER_MODE': 'both',
     'RANDOM_SEED': 42,
     'WINDOW': True,
     'USE_BATCH_CORRECTION': True,
 }
 
 
-# Parse string value to appropriate Python type
+# Parse string value to appropriate Python type.
 def _parse_value(value_str):
     value_str = value_str.strip()
     
@@ -53,7 +53,7 @@ def _parse_value(value_str):
     return value_str
 
 
-# Load local configuration overrides from config_local.txt
+# Load local configuration overrides from config_local.txt.
 def _load_config_from_file():
     config_file = Path(__file__).parent / 'config_local.txt'
     
@@ -66,11 +66,11 @@ def _load_config_from_file():
             for line in f:
                 line = line.strip()
                 
-                # Skip empty lines and comments
+                # Skip empty lines and comments.
                 if not line or line.startswith('#'):
                     continue
                 
-                # Parse key=value pairs
+                # Parse key=value pairs.
                 if '=' in line:
                     key, value = line.split('=', 1)
                     key = key.strip()
@@ -87,9 +87,9 @@ def _load_config_from_file():
     
     return overrides
 
-# Load settings with overrides
+# Load settings with overrides.
 settings = {**DEFAULT_SETTINGS, **_load_config_from_file()}
 
-# Export as module-level variables
+# Export as module-level variables for other files' ease of access.
 for key, value in settings.items():
     globals()[key] = value

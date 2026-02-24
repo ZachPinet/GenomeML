@@ -37,10 +37,15 @@ class RunWindow:
         # Additional options
         self.max_seqs_var = tk.IntVar()
         self.train_percentage_var = tk.IntVar()
+        self.verbose_var = tk.IntVar()
         self.make_plot_var = tk.BooleanVar()
         self.show_bounds_var = tk.BooleanVar()
-        self.mode_var = tk.StringVar()
+        self.std_multiplier_var = tk.DoubleVar()
+        self.frac_var = tk.DoubleVar()
+        self.outlier_mode_var = tk.StringVar()
         self.random_seed_var = tk.IntVar()
+        self.window_var = tk.BooleanVar()
+        self.use_batch_correction_var = tk.BooleanVar()
         
         # Initialize the GUI
         self.load_current_config()
@@ -93,10 +98,15 @@ class RunWindow:
         # Additional options
         self.max_seqs_var.set(config.MAX_SEQS)
         self.train_percentage_var.set(config.TRAIN_PERCENTAGE)
+        self.verbose_var.set(config.VERBOSE)
         self.make_plot_var.set(config.MAKE_PLOT)
         self.show_bounds_var.set(config.SHOW_BOUNDS)
-        self.mode_var.set(config.OUTLIER_MODE)
+        self.std_multiplier_var.set(config.STD_MULTIPLIER)
+        self.frac_var.set(config.FRAC)
+        self.outlier_mode_var.set(config.OUTLIER_MODE)
         self.random_seed_var.set(config.RANDOM_SEED)
+        self.window_var.set(config.WINDOW)
+        self.use_batch_correction_var.set(config.USE_BATCH_CORRECTION)
     
     # Save current GUI values to config_local.txt
     def save_config_to_file(self):
@@ -134,10 +144,15 @@ class RunWindow:
             f"DOUBLE_TRAIN_FILE={double_train_file}",
             f"MAX_SEQS={self.max_seqs_var.get()}",
             f"TRAIN_PERCENTAGE={self.train_percentage_var.get()}",
+            f"VERBOSE={self.verbose_var.get()}",
             f"MAKE_PLOT={self.make_plot_var.get()}",
             f"SHOW_BOUNDS={self.show_bounds_var.get()}",
-            f"OUTLIER_MODE={self.mode_var.get()}",
+            f"STD_MULTIPLIER{self.std_multiplier_var.get()}",
+            f"FRAC={self.frac_var.get()}",
+            f"OUTLIER_MODE={self.outlier_mode_var.get()}",
             f"RANDOM_SEED={self.random_seed_var.get()}",
+            f"WINDOW={self.window_var.get()}",
+            f"USE_BATCH_CORRECTION={self.use_batch_correction_var.get()}",
         ]
         
         # Edit the local config file
@@ -382,7 +397,7 @@ class RunWindow:
         )
         ttk.Combobox(
             self.additional_options_frame,
-            textvariable=self.mode_var,
+            textvariable=self.outlier_mode_var,
             values=['simple', 'complex', 'both', 'off'],
             state="readonly",
             width=8
