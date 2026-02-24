@@ -81,7 +81,7 @@ def reload_config():
         'VERBOSE': 1,
         'MAKE_PLOT': True,
         'SHOW_BOUNDS': True,
-        'STD_MULTIPLIER': 2,
+        'STD_MULTIPLIER': 2.0,
         'FRAC': 0.3,
         'OUTLIER_MODE': 'both',
         'RANDOM_SEED': 42,

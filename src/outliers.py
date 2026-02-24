@@ -100,9 +100,12 @@ def detect_outliers(
                 f"({percent:.2f}%)\n")
 
     # Select the method of logging.
-    if mode.lower() == 'simple' or mode.lower() == 'both':
+    if mode.lower() == 'simple':
         _simple_log(outliers, f'{col_name}_outliers.txt')
-    elif mode.lower() == 'complex' or mode.lower() == 'both':
+    elif mode.lower() == 'complex':
+        _complex_log(outliers, output_file, col_name)
+    elif mode.lower() == 'both':
+        _simple_log(outliers, f'{col_name}_outliers.txt')
         _complex_log(outliers, output_file, col_name)
     else:
         raise ValueError("Mode must be 'simple', 'complex', 'both', or 'off'.")

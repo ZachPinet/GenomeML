@@ -52,6 +52,9 @@ class RunWindow:
         self.update_workflow_options()
         self.update_file_options()
         
+        # Prevent spinboxes from auto-focusing and capturing mousewheel
+        self.root.after(100, self._set_initial_focus)
+        
         # Handle window closing
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
@@ -64,6 +67,20 @@ class RunWindow:
     def _update_run_button(self):
         if RunWindow._training_in_progress:
             self.btn_run.config(state='disabled', text="Training...")
+    
+    # Set initial focus to prevent spinbox auto-focus
+    def _set_initial_focus(self):
+        # Focus on the window itself instead of any widget
+        self.root.focus_force()
+    
+    # Disable mousewheel on spinbox to prevent value changes while scrolling
+    def _disable_spinbox_mousewheel(self, spinbox):
+        def ignore_mousewheel(event):
+            # Remove focus from spinbox when mousewheel is used
+            self.root.focus()
+            return "break"  # Prevent event from propagating
+        
+        spinbox.bind("<MouseWheel>", ignore_mousewheel)
 
     # Get the local config values and load them into the GUI variables
     def load_current_config(self):
@@ -146,7 +163,7 @@ class RunWindow:
             f"VERBOSE={self.verbose_var.get()}",
             f"MAKE_PLOT={self.make_plot_var.get()}",
             f"SHOW_BOUNDS={self.show_bounds_var.get()}",
-            f"STD_MULTIPLIER{self.std_multiplier_var.get()}",
+            f"STD_MULTIPLIER={self.std_multiplier_var.get()}",
             f"FRAC={self.frac_var.get()}",
             f"OUTLIER_MODE={self.outlier_mode_var.get()}",
             f"RANDOM_SEED={self.random_seed_var.get()}",
@@ -338,39 +355,45 @@ class RunWindow:
         ).grid(
             row=0, column=0, sticky=tk.W, padx=(0, 5)
         )
-        ttk.Spinbox(
+        max_seqs_spin = ttk.Spinbox(
             self.additional_options_frame,
             from_=1000, to=999999, width=10,
             textvariable=self.max_seqs_var
-        ).grid(
+        )
+        max_seqs_spin.grid(
             row=1, column=0, sticky=tk.W, padx=(0, 20)
         )
+        self._disable_spinbox_mousewheel(max_seqs_spin)
         
         ttk.Label(
             self.additional_options_frame, text="Train Percentage:"
         ).grid(
             row=0, column=1, sticky=tk.W, padx=(0, 5)
         )
-        ttk.Spinbox(
+        train_pct_spin = ttk.Spinbox(
             self.additional_options_frame,
             from_=10, to=90, width=10,
             textvariable=self.train_percentage_var
-        ).grid(
+        )
+        train_pct_spin.grid(
             row=1, column=1, sticky=tk.W, padx=(0, 20)
         )
+        self._disable_spinbox_mousewheel(train_pct_spin)
         
         ttk.Label(
             self.additional_options_frame, text="Random Seed:"
         ).grid(
             row=0, column=2, sticky=tk.W, padx=(0, 5)
         )
-        ttk.Spinbox(
+        random_seed_spin = ttk.Spinbox(
             self.additional_options_frame,
             from_=1, to=9999, width=10,
             textvariable=self.random_seed_var
-        ).grid(
+        )
+        random_seed_spin.grid(
             row=1, column=2, sticky=tk.W
         )
+        self._disable_spinbox_mousewheel(random_seed_spin)
         
         # Additional options row 2
         ttk.Checkbutton(
@@ -453,13 +476,15 @@ class RunWindow:
             ).grid(
                 row=0, column=0, sticky=tk.W, padx=(0, 10)
             )
-            ttk.Spinbox(
+            pca_spin = ttk.Spinbox(
                 self.options_frame, 
                 from_=1, to=20, width=5, 
                 textvariable=self.pca_components_var
-            ).grid(
+            )
+            pca_spin.grid(
                 row=0, column=1, sticky=tk.W
             )
+            self._disable_spinbox_mousewheel(pca_spin)
         
         # Data splits for ensemble workflow
         elif workflow == "ensemble":            
@@ -468,13 +493,15 @@ class RunWindow:
             ).grid(
                 row=0, column=0, sticky=tk.W, padx=(0, 10)
             )
-            ttk.Spinbox(
+            data_splits_spin = ttk.Spinbox(
                 self.options_frame, 
                 from_=2, to=20, width=5, 
                 textvariable=self.data_splits_var
-            ).grid(
+            )
+            data_splits_spin.grid(
                 row=0, column=1, sticky=tk.W
             )
+            self._disable_spinbox_mousewheel(data_splits_spin)
         
         # Base file for double columns workflow
         elif workflow == "double_columns":
@@ -599,6 +626,7 @@ class RunWindow:
                 textvariable=self.start_file_var
             )
             start_spin.grid(row=1, column=1, sticky=tk.W)
+            self._disable_spinbox_mousewheel(start_spin)
             
             # End of the range
             ttk.Label(
@@ -613,6 +641,7 @@ class RunWindow:
                 textvariable=self.end_file_var
             )
             end_spin.grid(row=2, column=1, sticky=tk.W)
+            self._disable_spinbox_mousewheel(end_spin)
 
     # Handle file selection from the dropdown
     def on_file_select(self, event, target_var=None):
