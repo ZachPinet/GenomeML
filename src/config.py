@@ -49,7 +49,9 @@ def _parse_value(default_settings, key, value):
                         "Mode must be 'simple', 'complex', 'both', or 'off'."
                     )
             # Make sure filenames are valid.
-            elif key in ('COMPLEX_OUTLIER_FILE', 'PERCENT_OUTLIER_FILE'):
+            elif key in (
+                'COMPLEX_OUTLIER_FILE', 'PERCENT_OUTLIER_FILE', 'RUN_DATA_FILE'
+            ):
                 if len(value) < 1 or len(value) > 255:
                     raise ValueError(
                         f"Invalid File Name: '{value}'. "
@@ -142,6 +144,7 @@ def reload_config():
         'USE_BATCH_CORRECTION': True,
         'COMPLEX_OUTLIER_FILE': 'outliers',
         'PERCENT_OUTLIER_FILE': 'outlier_percents',
+        'RUN_DATA_FILE': 'run_data',
     }
     
     # Load settings with overrides.

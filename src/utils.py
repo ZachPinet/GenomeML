@@ -3,6 +3,8 @@ from pathlib import Path
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
+from src import config
+
 
 # Log the run's BIC score to a .txt file
 def log_bic_score(y_true, y_pred, model, scenario_name, run_details):
@@ -18,8 +20,9 @@ def log_bic_score(y_true, y_pred, model, scenario_name, run_details):
     smse = np.sqrt(mean_squared_error(y_true, y_pred))
     
     # Log to file (append mode like outlier_percents.txt)
-    bic_file = Path.cwd() / 'outputs' / 'run_data' / 'run_data1.txt'
-    with open(bic_file, 'a') as f:
+    run_data_path = Path.cwd() / 'outputs' / 'run_data'
+    run_data_file = run_data_path / f'{config.RUN_DATA_FILE}.txt'
+    with open(run_data_file, 'a') as f:
         f.write(
             f"{scenario_name}\t{bic:.4f}\t{correlation:.4f}\t"
             f"{smse:.4f}\t{n_params}\t{run_details}\n"

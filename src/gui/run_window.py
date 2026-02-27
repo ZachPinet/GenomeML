@@ -47,6 +47,7 @@ class RunWindow:
         self.use_batch_correction_var = tk.BooleanVar()
         self.complex_outlier_file_var = tk.StringVar()
         self.percent_outlier_file_var = tk.StringVar()
+        self.run_data_file_var = tk.StringVar()
         
         # Initialize the GUI
         self.load_current_config()
@@ -127,6 +128,7 @@ class RunWindow:
         self.use_batch_correction_var.set(config.USE_BATCH_CORRECTION)
         self.complex_outlier_file_var.set(config.COMPLEX_OUTLIER_FILE)
         self.percent_outlier_file_var.set(config.PERCENT_OUTLIER_FILE)
+        self.run_data_file_var.set(config.RUN_DATA_FILE)
     
     # Save current GUI values to config_local.txt
     def save_config_to_file(self):
@@ -175,6 +177,7 @@ class RunWindow:
             f"USE_BATCH_CORRECTION={self.use_batch_correction_var.get()}",
             f"COMPLEX_OUTLIER_FILE={self.complex_outlier_file_var.get()}",
             f"PERCENT_OUTLIER_FILE={self.percent_outlier_file_var.get()}",
+            f"RUN_DATA_FILE={self.run_data_file_var.get()}",
         ]
         
         # Edit the local config file
@@ -688,7 +691,6 @@ class RunWindow:
             try:
                 print(f"Starting {self.workflow_var.get()} training...")
                 run_training()
-                print("Training completed successfully!")
             except Exception as e:
                 print(f"Training error: {e}")
             finally:
