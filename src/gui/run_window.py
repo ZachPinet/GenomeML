@@ -45,6 +45,8 @@ class RunWindow:
         self.random_seed_var = tk.IntVar()
         self.window_var = tk.BooleanVar()
         self.use_batch_correction_var = tk.BooleanVar()
+        self.complex_outlier_file_var = tk.StringVar()
+        self.percent_outlier_file_var = tk.StringVar()
         
         # Initialize the GUI
         self.load_current_config()
@@ -123,6 +125,8 @@ class RunWindow:
         self.random_seed_var.set(config.RANDOM_SEED)
         self.window_var.set(config.WINDOW)
         self.use_batch_correction_var.set(config.USE_BATCH_CORRECTION)
+        self.complex_outlier_file_var.set(config.COMPLEX_OUTLIER_FILE)
+        self.percent_outlier_file_var.set(config.PERCENT_OUTLIER_FILE)
     
     # Save current GUI values to config_local.txt
     def save_config_to_file(self):
@@ -169,6 +173,8 @@ class RunWindow:
             f"RANDOM_SEED={self.random_seed_var.get()}",
             f"WINDOW={self.window_var.get()}",
             f"USE_BATCH_CORRECTION={self.use_batch_correction_var.get()}",
+            f"COMPLEX_OUTLIER_FILE={self.complex_outlier_file_var.get()}",
+            f"PERCENT_OUTLIER_FILE={self.percent_outlier_file_var.get()}",
         ]
         
         # Edit the local config file

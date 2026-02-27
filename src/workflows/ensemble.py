@@ -30,9 +30,7 @@ def is_compatible(train_pct, data_splits):
 
 
 # This ensemble approach averages predictions from multiple models.
-def ensemble(
-        x, y, batch, train_percentage, data_splits, col_name, output_file, pct_file, mode
-):
+def ensemble(x, y, batch, train_percentage, data_splits, col_name, mode):
     # Train on overlapping continuous segments, test on full dataset
 
     # Compatibility check
@@ -137,9 +135,5 @@ def ensemble(
     
     print(f"Creating graph and outlier files...")
     final_col_name = f"ensemble{train_percentage}p{data_splits}s-{col_name}"
-    plot_graph(
-        y, averaged_predictions, final_col_name, final_smse
-    )
-    detect_outliers(
-        x, y, averaged_predictions, output_file, pct_file, final_col_name, mode
-    )
+    plot_graph(y, averaged_predictions, final_col_name, final_smse)
+    detect_outliers(x, y, averaged_predictions, final_col_name, mode)

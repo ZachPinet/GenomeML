@@ -10,10 +10,8 @@ from src.utils import log_bic_score
 
 # This trains on half of one column and tests on half of another.
 def double_columns(
-        x, y, y2, batch, batch_test, train_file, test_file, train_pctg, 
-        output_file, pct_file, mode
+        x, y, y2, batch, batch_test, train_file, test_file, train_pctg, mode
 ):
-    
     # Validate train_percentage
     if train_pctg % 10 != 0 or train_pctg < 10 or train_pctg > 90:
         print(f"Error: train_percentage ({train_pctg}) must be a multiple of 10 between 10 and 90")
@@ -93,10 +91,5 @@ def double_columns(
         
         # Save results
         print(f"Creating graph and outlier files...")
-        plot_graph(
-            y_test, predictions, scenario_name, smse
-        )
-        detect_outliers(
-            x_test, y_test, predictions, output_file, pct_file, 
-            scenario_name, mode
-        )
+        plot_graph(y_test, predictions, scenario_name, smse)
+        detect_outliers(x_test, y_test, predictions, scenario_name, mode)

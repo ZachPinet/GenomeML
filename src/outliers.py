@@ -9,25 +9,23 @@ from src.data_loading import one_hot_decode
 
 
 # This outputs the outliers to a new file.
-def _simple_log(outliers, output_file):
-    outliers_dir = Path.cwd() / 'outputs' / 'simple_outliers'
-    output_file_path = outliers_dir / output_file
-    
+def _simple_log(outliers, simple_dir, output_file):
+    simple_file = simple_dir / output_file
     try:
-        with open(output_file_path, 'w') as f:
+        with open(simple_file, 'w') as f:
             for sequence, category in outliers:
                 f.write(f"{sequence}\t{category}\n")
     except Exception as e:
-        print(f"Error saving simple outliers: {e}")
+        print(f"Error saving simple outliers: {e}.")
 
 
 # This updates an existing file with the new outlier information.
-def _complex_log(outliers, output_file, column_name):
+def _complex_log(outliers, complex_file, column_name):
     outlier_dict = {}
 
     # Load existing data if it exists.
-    if os.path.exists(output_file):
-        with open(output_file, 'r') as f:
+    if os.path.exists(complex_file):
+        with open(complex_file, 'r') as f:
             for line in f:
                 parts = line.strip().split('\t')
                 if len(parts) >= 3:
@@ -45,7 +43,7 @@ def _complex_log(outliers, output_file, column_name):
             outlier_dict[sequence][1].append(f"{column_name}:{category}")
 
     # Write updated data.
-    with open(output_file, 'w') as f:
+    with open(complex_file, 'w') as f:
         for sequence, (count, col_and_category) in outlier_dict.items():
             f.write(
                 f"{sequence}\t{count}\t" + "\t".join(col_and_category) + "\n"
@@ -53,9 +51,7 @@ def _complex_log(outliers, output_file, column_name):
 
 
 # This detects and logs outliers based on deviation from LOESS.
-def detect_outliers(
-        sequences, y_true, y_pred, output_file, pct_file, col_name, mode
-):
+def detect_outliers(sequences, y_true, y_pred, col_name, mode):
     if mode.lower() == 'off':
         print("Outlier detection skipped (mode='off').")
         return
@@ -63,6 +59,14 @@ def detect_outliers(
     if config.DO_PCA == True:
         mode = 'simple'
         print("PCA mode enabled - using simple outlier detection.")
+
+    # Access outlier directories.
+    cwd = Path.cwd()
+    complex_dir = cwd / 'outputs' / 'outliers_complex'
+    percent_dir = cwd / 'outputs' / 'outliers_percent'
+    simple_dir = cwd / 'outputs' / 'outliers_simple'
+    complex_file = complex_dir / f'{config.COMPLEX_OUTLIER_FILE}.txt'
+    percent_file = percent_dir / f'{config.PERCENT_OUTLIER_FILE}.txt'
     
     # Fit LOESS curve.  
     loess_sorted = lowess(y_pred, y_true, frac=config.FRAC)
@@ -78,7 +82,7 @@ def detect_outliers(
 
     # Identify the outliers.
     outliers = []
-    for idx, (true_val, pred_val) in enumerate(zip(y_true, y_pred)):
+    for idx, (true_val_unused, pred_val) in enumerate(zip(y_true, y_pred)):
         if pred_val > upper_bound[idx]:
             category = 'overfitted'
         elif pred_val < lower_bound[idx]:
@@ -95,18 +99,18 @@ def detect_outliers(
     print(f"Outliers detected: {outlier_count}/{total_count} ({percent:.2f}%)")
 
     # Write percentage to outlier_percents.txt file.
-    with open(pct_file, 'a') as f:
+    with open(percent_file, 'a') as f:
         f.write(f"{col_name} Outliers detected: {outlier_count}/{total_count} "
                 f"({percent:.2f}%)\n")
 
     # Select the method of logging.
     if mode.lower() == 'simple':
-        _simple_log(outliers, f'{col_name}_outliers.txt')
+        _simple_log(outliers, simple_dir, f'{col_name}_outliers.txt')
     elif mode.lower() == 'complex':
-        _complex_log(outliers, output_file, col_name)
+        _complex_log(outliers, complex_file, col_name)
     elif mode.lower() == 'both':
-        _simple_log(outliers, f'{col_name}_outliers.txt')
-        _complex_log(outliers, output_file, col_name)
+        _simple_log(outliers, simple_dir, f'{col_name}_outliers.txt')
+        _complex_log(outliers, complex_file, col_name)
     else:
         raise ValueError("Mode must be 'simple', 'complex', 'both', or 'off'.")
     

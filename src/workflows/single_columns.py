@@ -9,9 +9,7 @@ from src.outliers import detect_outliers
 
 
 # This trains on and predicts values for one specific column, no PCA.
-def single_column(
-        x, y, batch, kfold, col_name, output_file, pct_file, mode
-):
+def single_column(x, y, batch, kfold, col_name, mode):
     if kfold:
         print(f"PCA disabled - using K-fold cross-validation on one file.")
     else:
@@ -69,8 +67,7 @@ def single_column(
 
             # Detect and log outliers
             detect_outliers(
-                x_test, y_test, predictions, output_file, 
-                pct_file, f"{col_name} - Fold {fold}", mode
+                x_test, y_test, predictions, f"{col_name} - Fold {fold}", mode
             )
 
             # Store for the combined graph
@@ -82,14 +79,8 @@ def single_column(
         
         else:
             # Graph and outliers for single run and end loop
-            plot_graph(
-                y_test, predictions, col_name, smse
-            )
-            detect_outliers(
-                x_test, y_test, predictions, output_file, pct_file, 
-                col_name, mode
-            )
-
+            plot_graph(y_test, predictions, col_name, smse)
+            detect_outliers(x_test, y_test, predictions, col_name, mode)
             return
 
     # Final combined graph after all folds
@@ -101,6 +92,5 @@ def single_column(
 
     # Final outlier after all folds
     detect_outliers(
-        all_seqs, all_y_true, all_y_pred, output_file, pct_file, 
-        f"{col_name} - Combined", mode
+        all_seqs, all_y_true, all_y_pred, f"{col_name} - Combined", mode
     )

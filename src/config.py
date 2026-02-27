@@ -1,28 +1,80 @@
 from pathlib import Path
 
 
-# Parse string value to appropriate Python type.
-def _parse_value(value_str):
-    value_str = value_str.strip()
+# Parse the string value to Python type given by default_settings.
+def _parse_value(default_settings, key, value):
     
-    # Boolean values
-    if value_str.lower() in ('true', 'false'):
-        return value_str.lower() == 'true'
+    # Get the expected type from default_settings.
+    if key not in default_settings:
+        raise ValueError(f"Invalid config key {key}: {value}")
     
-    # Try integer
+    default_value = default_settings[key]
+    expected_type = type(default_value)
+
     try:
-        return int(value_str)
-    except ValueError:
-        pass
+        if expected_type == bool:
+            if value.capitalize() in ('True', 'False'):
+                return value.capitalize() == 'True'
+        
+        elif expected_type == int:
+            if key == 'TRAIN_PERCENTAGE':
+                if int(value) < 1 or int(value) > 99:
+                    raise ValueError(
+                        f"Invalid Train Percentage: '{value}'. "
+                        "Percentage must be between 1 and 99."
+                    )
+            if key == 'VERBOSE':
+                if int(value) < 0 or int(value) > 2:
+                    raise ValueError(
+                        f"Invalid Verbose: '{value}'. "
+                        "Verbose must be 0, 1, or 2."
+                    )
+            return int(value)
+        
+        elif expected_type == float:
+            if key == 'FRAC':
+                if float(value) < 0 or float(value) > 1:
+                    raise ValueError(
+                        f"Invalid Frac: '{value}'. "
+                        "Frac must be a float between 0 and 1."
+                    )
+            return float(value)
+        
+        elif expected_type == str:
+            # Make sure outlier mode is valid.
+            if key == 'OUTLIER_MODE':
+                if value.lower() not in ('simple', 'complex', 'both', 'off'):
+                    raise ValueError(
+                        f"Invalid Outlier Mode: '{value}'. "
+                        "Mode must be 'simple', 'complex', 'both', or 'off'."
+                    )
+            # Make sure filenames are valid.
+            elif key in ('COMPLEX_OUTLIER_FILE', 'PERCENT_OUTLIER_FILE'):
+                if len(value) < 1 or len(value) > 255:
+                    raise ValueError(
+                        f"Invalid File Name: '{value}'. "
+                        "File names must be between 1-255 characters."
+                    )
+                elif value[0] in '._-' or value[-1] in '._-':
+                    raise ValueError(
+                        f"Invalid File Name: '{value}'. "
+                        "Names cannot start or end with '.', '_', or '-'."
+                    )
+                for x in value:
+                    if x.isalnum() == False and x not in '._-':
+                        raise ValueError(
+                            f"Invalid File Name: '{value}'. "
+                            "All chars must be alphanumeric, '.', '_', or '-'."
+                        )
+                if value[-4:] == '.txt':
+                    value = value[:-4]
+            return value
     
-    # Try float
-    try:
-        return float(value_str)
-    except ValueError:
-        pass
-    
-    # Return as string
-    return value_str
+    # If there is an issue with the local config, use the default value.
+    except (ValueError, TypeError) as e:
+        print(f"Warning: Could not parse '{value}' as {expected_type.__name__}"
+              f" for key '{key}', using default: {e}.")
+        return default_value
 
 
 # Load local configuration overrides from config_local.txt.
@@ -46,8 +98,9 @@ def _load_config_from_file(default_settings):
                 if '=' in line:
                     key, value = line.split('=', 1)
                     key = key.strip()
-                    value = _parse_value(value)
-                    
+                    value = value.strip()
+                    value = _parse_value(default_settings, key, value)
+
                     if key in default_settings:
                         overrides[key] = value
                     else:
@@ -87,6 +140,8 @@ def reload_config():
         'RANDOM_SEED': 42,
         'WINDOW': True,
         'USE_BATCH_CORRECTION': True,
+        'COMPLEX_OUTLIER_FILE': 'outliers',
+        'PERCENT_OUTLIER_FILE': 'outlier_percents',
     }
     
     # Load settings with overrides.

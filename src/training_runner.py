@@ -24,12 +24,6 @@ def run_training():
     columns_dir = cwd / 'inputs' / 'columns'
     seq_file = cwd / 'inputs' / 'seqs.fa'
     max_seqs = config.MAX_SEQS
-        
-    # Access files for detect_outliers() function.
-    outputs_dir = cwd / 'outputs'
-    outputs_dir.mkdir(exist_ok=True)  # Ensure outputs directory exists
-    output_file = outputs_dir / 'outliers.txt'
-    pct_file = outputs_dir / 'outlier_percents.txt'
 
     # Train and test on the same column's values only.
     if config.DO_SINGLE_COLUMN:
@@ -56,8 +50,6 @@ def run_training():
                 x, y, batch, 
                 kfold=config.KFOLD, 
                 col_name=col_name, 
-                output_file=output_file, 
-                pct_file=pct_file, 
                 mode=config.OUTLIER_MODE
             )
 
@@ -87,8 +79,6 @@ def run_training():
             pca_values(
                 x, y_raw, batch, 
                 pca_components=config.PCA_COMPONENTS, 
-                output_file=output_file, 
-                pct_file=pct_file, 
                 mode=config.OUTLIER_MODE
             )
 
@@ -121,8 +111,6 @@ def run_training():
                 train_percentage=config.TRAIN_PERCENTAGE, 
                 data_splits=config.DATA_SPLITS, 
                 col_name=col_name, 
-                output_file=output_file, 
-                pct_file=pct_file, 
                 mode=config.OUTLIER_MODE
             )
 
@@ -165,8 +153,6 @@ def run_training():
                 train_file=config.DOUBLE_TRAIN_FILE, 
                 test_file=i, 
                 train_pctg=config.TRAIN_PERCENTAGE, 
-                output_file=output_file, 
-                pct_file=pct_file, 
                 mode=config.OUTLIER_MODE
             )
 

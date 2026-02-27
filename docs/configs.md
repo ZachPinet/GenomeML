@@ -55,7 +55,7 @@ This is the value for the standard deviation used to create upper and lower boun
 This is a value between 0-1 that affects the smoothness and sensitivity of the LOESS curve.
 
 ### OUTLIER_MODE
-This can be 'simple', 'complex', 'both', or 'off'. Currently, as only one 'outliers.txt' file is used, 'complex' and 'both' are essentially the same, and will produce a more comprehensive and detailed outliers file than 'simple'. Any mode besides 'off' will also edit 'outlier_percents.txt'.
+This is a string that can be 'simple', 'complex', 'both', or 'off'. If the Outlier Mode is 'simple' or 'both', a file will be created with the outlier data from a single run in outputs/outliers_simple/. If the mode is 'complex' or 'both', a file will be created or edited with the outlier data from the most recent run in outputs/outliers_complex/. Any mode besides 'off' will also create or edit a file with the percentage of outliers from the most recent run in outputs/outliers_percent/. If the mode is 'off', no outliers will be logged at all.
 
 ### RANDOM_SEED
 This seed is used for all randomness so that it may reproduceable.
@@ -65,3 +65,9 @@ When this is true, the program will start by opening up the interactive window. 
 
 ### USE_BATCH_CORRECTION
 When this is true, the model will use batch correction based on batches derived from the names of each column file.
+
+### COMPLEX_OUTLIER_FILE
+This is the string name for the .txt file that will receive outlier data from a run if the Outlier Mode is 'complex' or 'both'. The file with this name will be placed into outputs/outliers_complex/. If the file already exists and has data, new data will be appended to it, rather than overwriting.
+
+### PERCENT_OUTLIER_FILE
+This is the string name for the .txt file that will receive outlier data from a run if outliers are enabled. The file with this name will be placed into outputs/outliers_percent/. If the file already exists and has data, new data will be appended to it, rather than overwriting.
