@@ -29,3 +29,24 @@ def log_bic_score(y_true, y_pred, model, scenario_name, run_details):
         )
     
     print(f"BIC logged: {scenario_name} = {bic:.4f}")
+
+
+# This one-hot encodes any sequence and returns it.
+def one_hot_encode(sequence):
+    mapping = {
+        'A': [1, 0, 0, 0], 'C': [0, 1, 0, 0], 'T': [0, 0, 1, 0], 
+        'G': [0, 0, 0, 1], 'N': [0, 0, 0, 0]
+    }
+    return np.array([mapping[nuc] for nuc in sequence], dtype=np.float32)
+
+
+# This one-hot-decodes any sequence back into letters and returns it.
+def one_hot_decode(encoded_sequence):
+    reverse_mapping = {
+        (1, 0, 0, 0): 'A', (0, 1, 0, 0): 'C', (0, 0, 1, 0): 'T', 
+        (0, 0, 0, 1): 'G', (0, 0, 0, 0): 'N'
+    }
+    decoded_sequence = ''.join(
+        reverse_mapping.get(tuple(vec), 'N') for vec in encoded_sequence
+    )
+    return decoded_sequence

@@ -5,7 +5,7 @@ import numpy as np
 from statsmodels.nonparametric.smoothers_lowess import lowess
 
 from src import config
-from src.data_loading import one_hot_decode
+from src.utils import one_hot_decode
 
 
 # This outputs the outliers to a new file.

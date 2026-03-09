@@ -71,3 +71,6 @@ This is the string name for the .txt file that will receive outlier data from a 
 
 ### PERCENT_OUTLIER_FILE
 This is the string name for the .txt file that will receive outlier data from a run if outliers are enabled. The file with this name will be placed into outputs/outliers_percent/. If the file already exists and has data, new data will be appended to it, rather than overwriting.
+
+### RUN_DATA_FILE
+This is the string name for the .txt file that will receive data from a run. The file with this name will be placed into outputs/run_data/. If the file already exists and has data, new data will be appended to it, rather than overwriting.

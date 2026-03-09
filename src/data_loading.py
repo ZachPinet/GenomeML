@@ -1,5 +1,7 @@
 import numpy as np
 
+from src.utils import one_hot_encode
+
 
 # Get batch ID from filename (0=BroadHistone, 1=OpenChromChip, 2=UwTfbs)
 def get_batch_id(filename):
@@ -12,27 +14,6 @@ def get_batch_id(filename):
         return 2
     else:
         return -1  # Unknown batch
-
-
-# This one-hot encodes any sequence and returns it.
-def one_hot_encode(sequence):
-    mapping = {
-        'A': [1, 0, 0, 0], 'C': [0, 1, 0, 0], 'T': [0, 0, 1, 0], 
-        'G': [0, 0, 0, 1], 'N': [0, 0, 0, 0]
-    }
-    return np.array([mapping[nuc] for nuc in sequence], dtype=np.float32)
-
-
-# This one-hot-decodes any sequence back into letters and returns it.
-def one_hot_decode(encoded_sequence):
-    reverse_mapping = {
-        (1, 0, 0, 0): 'A', (0, 1, 0, 0): 'C', (0, 0, 1, 0): 'T', 
-        (0, 0, 0, 1): 'G', (0, 0, 0, 0): 'N'
-    }
-    decoded_sequence = ''.join(
-        reverse_mapping.get(tuple(vec), 'N') for vec in encoded_sequence
-    )
-    return decoded_sequence
 
 
 # This gets the relevant data and balances the ratio of values.
