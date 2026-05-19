@@ -34,6 +34,15 @@ This file logs outliers in the data generated from a workflow. A predicted value
 ### Run Model Button
 When this button is clicked, the chosen configs are saved to the config_local.txt and config.py is reloaded so that its module-level variables can be updated with the new local configs.
 
+# Models
+Each file in this folder holds a different model architecture that can easily be selected and swapped into the workflow.
+
+## model1_basic.py
+This is the basic model architecture and the default one to be used in case of a selection issue.
+
+## model2_keras_BC.py
+This model adds a BatchCorrectionLayer from Keras to the architecture.
+
 # Workflows
 
 # Outputs

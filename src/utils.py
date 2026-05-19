@@ -1,3 +1,4 @@
+import importlib
 from pathlib import Path
 
 import numpy as np
@@ -50,3 +51,30 @@ def one_hot_decode(encoded_sequence):
         reverse_mapping.get(tuple(vec), 'N') for vec in encoded_sequence
     )
     return decoded_sequence
+
+
+# This selects the model to be used from the models/ folder.
+def select_model(input_shape, output_dim=1, num_batches=3):
+    # Access the files in the 'models' folder.
+    cwd = Path.cwd()
+    models_dir = cwd / 'src' / 'models'
+    model_file_prefix = f"model{config.MODEL}_"
+    model_name = None
+
+    # Select the correct model based off the config value.
+    for file in models_dir.iterdir():
+        if file.is_file() and file.name.startswith(model_file_prefix):
+            model_name = file.stem
+            break
+
+    if model_name is None:
+        model_name = "model1_basic"
+
+    # Print feedback to terminal.
+    model_nickname = model_name.removeprefix(model_file_prefix)
+    print(f"Running Model {config.MODEL} - {model_nickname.title()}")
+
+    # Pass the inputs to the build_model function of the selected model.
+    model_file = importlib.import_module(f"src.models.{model_name}")
+    build_model = model_file.build_model
+    return build_model(input_shape, output_dim, num_batches)

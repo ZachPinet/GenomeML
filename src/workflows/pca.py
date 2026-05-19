@@ -8,8 +8,8 @@ from sklearn.preprocessing import StandardScaler
 
 from src import config
 from src.graphs.dot_plot import plot_graph
-from src.model import build_model
 from src.outliers import detect_outliers
+from src.utils import select_model
 
 
 # This applies PCA to values and predicts values.
@@ -41,9 +41,9 @@ def pca_values(x, y_raw, batch, pca_components, mode):
         )
 
         # Build, train, and test model
-        model = build_model((x.shape[1], x.shape[2]), output_dim=1)  # (500, 4)
+        model = select_model((x.shape[1], x.shape[2]), output_dim=1)
         
-        if config.USE_BATCH_CORRECTION:
+        if config.MODEL == 2:
             model.fit(
                 [x_train, batch_train], y_train, 
                 epochs=10, batch_size=32, 

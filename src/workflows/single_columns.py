@@ -4,8 +4,8 @@ from sklearn.model_selection import KFold
 
 from src import config
 from src.graphs.dot_plot import plot_graph
-from src.model import build_model
 from src.outliers import detect_outliers
+from src.utils import select_model
 
 
 # This trains on and predicts values for one specific column, no PCA.
@@ -32,10 +32,10 @@ def single_column(x, y, batch, kfold, col_name, mode):
         y_train, y_test = y[train_idx], y[test_idx]
         batch_train, batch_test = batch[train_idx], batch[test_idx]
 
-        model = build_model((500, 4))
+        model = select_model((500, 4))
 
         # Train the model
-        if config.USE_BATCH_CORRECTION:
+        if config.MODEL == 2:
             model.fit(
                 [x_train, batch_train], y_train, 
                 epochs=10, batch_size=32, 

@@ -3,9 +3,8 @@ from sklearn.metrics import mean_squared_error
 
 from src import config
 from src.graphs.dot_plot import plot_graph
-from src.model import build_model
 from src.outliers import detect_outliers
-from src.utils import log_bic_score
+from src.utils import log_bic_score, select_model
 
 
 # This trains on half of one column and tests on half of another.
@@ -65,9 +64,9 @@ def double_columns(
         print(f"Training {scenario_name}")
         
         # Build, train, and test model
-        model = build_model((500, 4), output_dim=1)
+        model = select_model((500, 4), output_dim=1)
         
-        if config.USE_BATCH_CORRECTION:
+        if config.MODEL == 2:
             model.fit([x_train, batch_train], y_train, 
                       epochs=10, batch_size=32, 
                       verbose=config.VERBOSE

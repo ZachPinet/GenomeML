@@ -57,6 +57,9 @@ This is a value between 0-1 that affects the smoothness and sensitivity of the L
 ### OUTLIER_MODE
 This is a string that can be 'simple', 'complex', 'both', or 'off'. If the Outlier Mode is 'simple' or 'both', a file will be created with the outlier data from a single run in outputs/outliers_simple/. If the mode is 'complex' or 'both', a file will be created or edited with the outlier data from the most recent run in outputs/outliers_complex/. Any mode besides 'off' will also create or edit a file with the percentage of outliers from the most recent run in outputs/outliers_percent/. If the mode is 'off', no outliers will be logged at all.
 
+### MODEL
+This is an integer that corresponds to one of the files in the src/models/ folder. The selected file will have its build_model() function used. For example, if MODEL=1, model1_basic.py will be the model used.
+
 ### RANDOM_SEED
 This seed is used for all randomness so that it may reproduceable.
 

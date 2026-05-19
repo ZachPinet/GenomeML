@@ -5,8 +5,8 @@ from sklearn.metrics import mean_squared_error
 
 from src import config
 from src.graphs.dot_plot import plot_graph
-from src.model import build_model
 from src.outliers import detect_outliers
+from src.utils import select_model
 
 
 # This ensures the input numbers for ensemble() are valid.
@@ -97,9 +97,9 @@ def ensemble(x, y, batch, train_percentage, data_splits, col_name, mode):
         y_train = y[train_indices]
         batch_train = batch[train_indices]
         
-        model = build_model((500, 4), output_dim=1)
+        model = select_model((500, 4), output_dim=1)
         
-        if config.USE_BATCH_CORRECTION:
+        if config.MODEL == 2:
             model.fit([x_train, batch_train], y_train, 
                       epochs=10, batch_size=32, 
                       verbose=config.VERBOSE

@@ -42,9 +42,9 @@ class RunWindow:
         self.std_multiplier_var = tk.DoubleVar()
         self.frac_var = tk.DoubleVar()
         self.outlier_mode_var = tk.StringVar()
+        self.model_var = tk.IntVar()
         self.random_seed_var = tk.IntVar()
         self.window_var = tk.BooleanVar()
-        self.use_batch_correction_var = tk.BooleanVar()
         self.complex_outlier_file_var = tk.StringVar()
         self.percent_outlier_file_var = tk.StringVar()
         self.run_data_file_var = tk.StringVar()
@@ -123,9 +123,9 @@ class RunWindow:
         self.std_multiplier_var.set(config.STD_MULTIPLIER)
         self.frac_var.set(config.FRAC)
         self.outlier_mode_var.set(config.OUTLIER_MODE)
+        self.model_var.set(config.MODEL)
         self.random_seed_var.set(config.RANDOM_SEED)
         self.window_var.set(config.WINDOW)
-        self.use_batch_correction_var.set(config.USE_BATCH_CORRECTION)
         self.complex_outlier_file_var.set(config.COMPLEX_OUTLIER_FILE)
         self.percent_outlier_file_var.set(config.PERCENT_OUTLIER_FILE)
         self.run_data_file_var.set(config.RUN_DATA_FILE)
@@ -172,9 +172,9 @@ class RunWindow:
             f"STD_MULTIPLIER={self.std_multiplier_var.get()}",
             f"FRAC={self.frac_var.get()}",
             f"OUTLIER_MODE={self.outlier_mode_var.get()}",
+            f"MODEL={self.model_var.get()}",
             f"RANDOM_SEED={self.random_seed_var.get()}",
             f"WINDOW={self.window_var.get()}",
-            f"USE_BATCH_CORRECTION={self.use_batch_correction_var.get()}",
             f"COMPLEX_OUTLIER_FILE={self.complex_outlier_file_var.get()}",
             f"PERCENT_OUTLIER_FILE={self.percent_outlier_file_var.get()}",
             f"RUN_DATA_FILE={self.run_data_file_var.get()}",
