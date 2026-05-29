@@ -66,7 +66,7 @@ def double_columns(
         # Build, train, and test model
         model = select_model((500, 4), output_dim=1)
         
-        if config.MODEL == 2:
+        if config.MODEL in (2, 3, 4, 5):
             model.fit([x_train, batch_train], y_train, 
                       epochs=10, batch_size=32, 
                       verbose=config.VERBOSE

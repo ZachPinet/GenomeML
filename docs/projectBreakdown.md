@@ -3,7 +3,9 @@ It aims to document what each file does and how it interacts with other files.
 
 # Inputs
 
-There are two inputs that GenomeML requires. The first is the inputs/columns/ subfolder, which must contain 'column' files. Each file must have n lines and n float values, with each value on its own line, being separated only by the newlines. The names of each column file can be anything.
+There are two inputs that GenomeML requires. The first is the inputs/columns/ subfolder, which must contain 'column' files. Each file must have n lines and n float values, with each value on its own line, being separated only by the newlines. The names of each column file can be anything. The second input is seqs.fa, which contains n lines of sequences of 1000 base pairs (A C T and G). Line i in seqs.fa will correspond to line i in each column. 
+
+When the model trains, it is fed a random selection of sequences from the sequence file. For each sequence, it tries to predict the corresponding value. It then receives the corresponding, actual value from whichever column file has been selected and self-adjusts. After training comes testing, where it is fed more sequences from the sequence file that it has never seen before. It predicts those values without seeing the actual values or making further adjustments.
 
 # SRC
 
@@ -17,9 +19,6 @@ This file is first created and populated by run_window.py and stores local confi
 This file establishes a dictionary of default config values. It then loads and parses the values from config_local.txt, uses them to replace their respective default values (if valid), and exports them as module-level variables.
 These module-level variables are then called by other files after importing config.py.
 The code to update the module-level variables is executed as soon as the program starts, and after each time the Run Model button is pressed in the Run Window.
-
-## model.py
-This file contains the model architecture to build a model when a workflow file calls for it. 
 
 ### Batch Correction Library
 When the USE_BATCH_CORRECTION config is True, the model architecture will include a Batch Correction Layer, defined by the BatchCorrectionLayer library. This library is based off of tf.keras.layers.Layer and includes functions called by Keras.
@@ -38,10 +37,21 @@ When this button is clicked, the chosen configs are saved to the config_local.tx
 Each file in this folder holds a different model architecture that can easily be selected and swapped into the workflow.
 
 ## model1_basic.py
-This is the basic model architecture and the default one to be used in case of a selection issue.
+This is the basic model architecture and the default one to be used in case of a selection issue. It has no batch correction features.
 
 ## model2_keras_BC.py
-This model adds a BatchCorrectionLayer from Keras to the architecture.
+This model adds a BatchCorrectionLayer, built on Keras, to the architecture. It is Feature-wise Linear Modulation (FiLM) style with batch-specific affine normalization.
+
+## model3_batch_embed_concat.py
+This model adds a batch embedding that is concatenated with the latent feature vector before the dense layers (batch-embedding concatenation).
+
+## model4_conditional_bn.py
+This model uses Conditional Batch Normalization (CBN) in the convolutional stack, modulating channels with batch-specific scale and shift parameters.
+
+## model5_conditional_film.py
+This model uses Conditional FiLM: a batch embedding goes through an MLP to generate gamma/beta that modulate the latent feature vector.
+
+contrasting learning gets only the shared features from two compared
 
 # Workflows
 

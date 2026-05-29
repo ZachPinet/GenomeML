@@ -43,7 +43,7 @@ def pca_values(x, y_raw, batch, pca_components, mode):
         # Build, train, and test model
         model = select_model((x.shape[1], x.shape[2]), output_dim=1)
         
-        if config.MODEL == 2:
+        if config.MODEL in (2, 3, 4, 5):
             model.fit(
                 [x_train, batch_train], y_train, 
                 epochs=10, batch_size=32, 
