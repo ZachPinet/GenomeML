@@ -20,30 +20,30 @@ def get_batch_id(filename):
 def load_data(fasta_file, values_file, max_seqs):
     sequences = []
     
-    # Read sequences from FASTA file and join each to one line
+    # Read sequences from FASTA file and join each to one line.
     with open(fasta_file, 'r') as f:
         lines = f.read().splitlines()
-        # FASTA has 1 useless header line followed by 7 sequence lines
+        # FASTA has 1 useless header line followed by 7 sequence lines.
         for i in range(0, len(lines), 8):
             full_sequence = ''.join(lines[i+1:i+8])
             sequences.append(full_sequence)
 
-    # Read numerical values from a column
+    # Read numerical values from a column.
     values = np.loadtxt(values_file, dtype=np.float32)
     assert len(sequences) == len(values), "Mismatch between seq and value len."
 
-    # Shuffle pairs and truncate to max_seqs
+    # Shuffle pairs and truncate to max_seqs.
     all_pairs = list(zip(sequences, values))
     np.random.shuffle(all_pairs)
     final_pairs = all_pairs[:max_seqs]
 
-    # One-hot encode the sequences to finalize the pairs
+    # One-hot encode the sequences to finalize the pairs.
     final_sequences = [one_hot_encode(seq) for (seq, val) in final_pairs]
     final_seq_array = np.array(final_sequences)
     final_values = [val for (seq, val) in final_pairs]
     final_val_array = np.array(final_values, dtype=np.float32)
 
-    # Extract batch ID from filename
+    # Extract batch ID from filename.
     batch_id = get_batch_id(str(values_file))
     batch_ids = np.full(len(final_sequences), batch_id, dtype=np.int32)
     
@@ -52,10 +52,10 @@ def load_data(fasta_file, values_file, max_seqs):
 
 # This loads every value file. Can use all of them or just one.
 def load_all_columns(columns_dir, reference_file, max_seqs):    
-    # Load the reference values to get the shuffle order
+    # Load the reference values to get the shuffle order.
     reference_values = np.loadtxt(reference_file, dtype=np.float32)
     
-    # Load all column values
+    # Load all column values.
     all_values = []
     for file in sorted(columns_dir.glob("*.txt")):
         values = np.loadtxt(file, dtype=np.float32)
@@ -63,7 +63,7 @@ def load_all_columns(columns_dir, reference_file, max_seqs):
     
     y_all = np.stack(all_values, axis=1)  # Shape: (n_samples, n_cols)
     
-    # Shuffle pairs and truncate to max_seqs
+    # Shuffle pairs and truncate to max_seqs.
     all_indices = np.arange(len(reference_values))
     np.random.shuffle(all_indices)
     final_indices = all_indices[:max_seqs]

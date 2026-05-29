@@ -20,8 +20,8 @@ This file establishes a dictionary of default config values. It then loads and p
 These module-level variables are then called by other files after importing config.py.
 The code to update the module-level variables is executed as soon as the program starts, and after each time the Run Model button is pressed in the Run Window.
 
-### Batch Correction Library
-When the USE_BATCH_CORRECTION config is True, the model architecture will include a Batch Correction Layer, defined by the BatchCorrectionLayer library. This library is based off of tf.keras.layers.Layer and includes functions called by Keras.
+## data_loading.py
+This file links together seq-val pairs and shuffles the pair order randomly. It also extracts batch ID values from the names of the column files. Its main function returns arrays of sequences and values, still paired by array position.
 
 ## outliers.py
 This file logs outliers in the data generated from a workflow. A predicted value is considered an outlier when it falls outside the range given by the fitted LOESS curve +/- (std_dev * STD_MULTIPLIER). When above the upper bound it is considered overfitted, and when below the lower bound it is considered underfitted. Outlier data is saved to the outputs folder.
