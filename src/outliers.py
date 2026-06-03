@@ -28,11 +28,25 @@ def _complex_log(outliers, complex_file, column_name):
         with open(complex_file, 'r') as f:
             for line in f:
                 parts = line.strip().split('\t')
-                if len(parts) >= 3:
-                    sequence = parts[0]
+                if len(parts) < 3:
+                    print(
+                        "Warning: Skipping malformed outlier line "
+                        "(expected 3+ tab-separated fields)."
+                    )
+                    continue
+
+                sequence = parts[0]
+                try:
                     count = int(parts[1])
-                    col_and_category = parts[2:]
-                    outlier_dict[sequence] = [count, col_and_category]
+                except ValueError:
+                    print(
+                        "Warning: Skipping malformed outlier line "
+                        "(count is not an integer)."
+                    )
+                    continue
+
+                col_and_category = parts[2:]
+                outlier_dict[sequence] = [count, col_and_category]
 
     # Update the outlier_dict.
     for sequence, category in outliers:
