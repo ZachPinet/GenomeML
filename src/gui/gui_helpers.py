@@ -1,3 +1,4 @@
+import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
 
@@ -12,6 +13,24 @@ def configure_size(window):
     y = (screen_height // 2) - (win_height // 2)
 
     return f"{win_width}x{win_height}+{x}+{y}"
+
+
+# This configures the style of the CTK elements.
+def configure_ctk_style():
+    #ctk.set_appearance_mode("dark")
+    #ctk.set_default_color_theme("blue")
+    theme = {
+        "bg_btn": "#00173c",
+        "fg_frame": "#00173c",
+        "fg_label": "#00173c",
+        "fg_btn": "LightSkyBlue1",
+        "font_title": ("Arial", 18, "bold", "underline"),
+        "font_subtitle": ("Arial", 10, "italic"),
+        "font_btn": ("Arial", 12, "bold"),
+        "text_label": "white",
+        "text_btn": "black"
+    }
+    return theme
 
 
 # This configures the style of the GUI elements.
