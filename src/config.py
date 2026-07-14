@@ -70,8 +70,9 @@ def _parse_value(default_settings, key, value):
                         )
                 if value[-4:] == '.txt':
                     value = value[:-4]
+                    
             return value
-    
+
     # If there is an issue with the local config, use the default value.
     except (ValueError, TypeError) as e:
         print(f"Warning: Could not parse '{value}' as {expected_type.__name__}"
@@ -133,6 +134,9 @@ def reload_config():
         'DOUBLE_TRAIN_FILE': 0,
         'MAX_SEQS': 999999,
         'TRAIN_PERCENTAGE': 50,
+        'ENABLE_FILTER_RANGE': True,
+        'FILTER_RANGE_MIN': -12.0,
+        'FILTER_RANGE_MAX': 12.0,
         'VERBOSE': 1,
         'MAKE_PLOT': True,
         'SHOW_BOUNDS': True,

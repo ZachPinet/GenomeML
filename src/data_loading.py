@@ -1,5 +1,6 @@
 import numpy as np
 
+from src import config
 from src.utils import one_hot_encode
 
 
@@ -32,10 +33,27 @@ def load_data(fasta_file, values_file, max_seqs):
     values = np.loadtxt(values_file, dtype=np.float32)
     assert len(sequences) == len(values), "Mismatch between seq and value len."
 
-    # Shuffle pairs and truncate to max_seqs.
+    # Pair sequences with values.
     all_pairs = list(zip(sequences, values))
-    np.random.shuffle(all_pairs)
-    final_pairs = all_pairs[:max_seqs]
+
+    # Filter out unwanted pairs.
+    filtered_pairs = []
+    for (seq, val) in all_pairs:
+        keep = True
+
+        # Filter min and max value range.
+        if config.ENABLE_FILTER_RANGE:
+            if val < config.FILTER_RANGE_MIN:
+                keep = False
+            elif val > config.FILTER_RANGE_MAX:
+                keep = False
+
+        if keep:
+            filtered_pairs.append((seq, val))
+
+    # Shuffle pairs and truncate to max_seqs.
+    np.random.shuffle(filtered_pairs)
+    final_pairs = filtered_pairs[:max_seqs]
 
     # One-hot encode the sequences to finalize the pairs.
     final_sequences = [one_hot_encode(seq) for (seq, val) in final_pairs]

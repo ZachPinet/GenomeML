@@ -49,8 +49,7 @@ def run_training():
             single_column(
                 x, y, batch, 
                 kfold=config.KFOLD, 
-                col_name=col_name, 
-                mode=config.OUTLIER_MODE
+                col_name=col_name,
             )
 
             if config.DO_RANGE == False:
@@ -78,8 +77,7 @@ def run_training():
             # Pass the variables to pca workflow.
             pca_values(
                 x, y_raw, batch, 
-                pca_components=config.PCA_COMPONENTS, 
-                mode=config.OUTLIER_MODE
+                pca_components=config.PCA_COMPONENTS,
             )
 
             if config.DO_RANGE == False:
@@ -110,8 +108,7 @@ def run_training():
                 x, y, batch, 
                 train_percentage=config.TRAIN_PERCENTAGE, 
                 data_splits=config.DATA_SPLITS, 
-                col_name=col_name, 
-                mode=config.OUTLIER_MODE
+                col_name=col_name,
             )
 
             if config.DO_RANGE == False:
@@ -152,8 +149,7 @@ def run_training():
                 x, y_train, y_test, batch, batch_test,
                 train_file=config.DOUBLE_TRAIN_FILE, 
                 test_file=i, 
-                train_pctg=config.TRAIN_PERCENTAGE, 
-                mode=config.OUTLIER_MODE
+                train_pctg=config.TRAIN_PERCENTAGE,
             )
 
             if config.DO_RANGE == False:

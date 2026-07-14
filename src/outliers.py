@@ -65,7 +65,8 @@ def _complex_log(outliers, complex_file, column_name):
 
 
 # This detects and logs outliers based on deviation from LOESS.
-def detect_outliers(sequences, y_true, y_pred, col_name, mode):
+def detect_outliers(sequences, y_true, y_pred, col_name):
+    mode = config.OUTLIER_MODE
     if mode.lower() == 'off':
         print("Outlier detection skipped (mode='off').")
         return

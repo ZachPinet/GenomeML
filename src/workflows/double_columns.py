@@ -9,37 +9,20 @@ from src.utils import log_bic_score, select_model
 
 # This trains on half of one column and tests on half of another.
 def double_columns(
-        x, y, y2, batch, batch_test, train_file, test_file, train_pctg, mode
+        x, y, y2, batch, batch_test, train_file, test_file, train_pctg
 ):
     # Validate train_percentage
-    if train_pctg % 10 != 0 or train_pctg < 10 or train_pctg > 90:
-        print(f"Error: train_percentage ({train_pctg}) must be a multiple of 10 between 10 and 90")
+    if not isinstance(train_pctg, int) or train_pctg < 1 or train_pctg > 99:
+        print(f"Error: train_percentage ({train_pctg}) must be an integer between 1 and 99")
         return
     
-    # Calculate which digits go to training vs testing
-    train_digits = train_pctg // 10  # e.g., 60% = 6 digits
-    test_digits = 10 - train_digits  # e.g., 40% = 4 digits
-
-    # Split indices based on last digit
-    train_indices = []
-    test_indices = []
-    
-    for i in range(len(x)):
-        last_digit = i % 10  # Get last digit of index
-        if last_digit < train_digits:
-            train_indices.append(i)
-        else:
-            test_indices.append(i)
-    
-    train_indices = np.array(train_indices)
-    test_indices = np.array(test_indices)
-    
-    # Split the data
-    x_train, x_test = x[train_indices], x[test_indices]
-    col1A, col1B = y[train_indices], y[test_indices]  # A = train, B = test
-    col2A, col2B = y2[train_indices], y2[test_indices]
-    batch_train = batch[train_indices]  # Batch IDs from training file
-    batch_test_split = batch_test[test_indices]  # Batch IDs from test file
+    # Split the already-sorted pairs into train and test by train_pctg.
+    num_train = int(len(x) * train_pctg / 100)
+    x_train, x_test = x[:num_train], x[num_train:]
+    col1A, col1B = y[:num_train], y[num_train:]  # A = train, B = test
+    col2A, col2B = y2[:num_train], y2[num_train:]
+    batch_train = batch[:num_train]  # Batch IDs from training file
+    batch_test_split = batch_test[num_train:]  # Batch IDs from test file
     
     print(f"Train size: {len(x_train):,} ({len(x_train)/len(x)*100:.1f}%)")
     print(f"Test size: {len(x_test):,} ({len(x_test)/len(x)*100:.1f}%)")
@@ -91,4 +74,4 @@ def double_columns(
         # Save results
         print(f"Creating graph and outlier files...")
         plot_graph(y_test, predictions, scenario_name, smse)
-        detect_outliers(x_test, y_test, predictions, scenario_name, mode)
+        detect_outliers(x_test, y_test, predictions, scenario_name)

@@ -13,7 +13,7 @@ from src.utils import select_model
 
 
 # This applies PCA to values and predicts values.
-def pca_values(x, y_raw, batch, pca_components, mode):
+def pca_values(x, y_raw, batch, pca_components):
     print(f"Loaded {x.shape[0]} sequences and {y_raw.shape[0]} value rows")
     
     # Scale PCA components for multi-output learning
@@ -72,4 +72,4 @@ def pca_values(x, y_raw, batch, pca_components, mode):
         print(f"Creating graph and outlier files...")
         col_name = f"Val-PCA-Component-{i+1}"
         plot_graph(y_test, predictions, col_name, smse)
-        detect_outliers(x_test, y_test, predictions, col_name, mode)
+        detect_outliers(x_test, y_test, predictions, col_name)

@@ -36,6 +36,9 @@ class RunWindow:
         # Additional options
         self.max_seqs_var = tk.IntVar()
         self.train_percentage_var = tk.IntVar()
+        self.enable_filter_range_var = tk.BooleanVar()
+        self.filter_range_min_var = tk.DoubleVar()
+        self.filter_range_max_var = tk.DoubleVar()
         self.verbose_var = tk.IntVar()
         self.make_plot_var = tk.BooleanVar()
         self.show_bounds_var = tk.BooleanVar()
@@ -117,6 +120,9 @@ class RunWindow:
         # Additional options
         self.max_seqs_var.set(config.MAX_SEQS)
         self.train_percentage_var.set(config.TRAIN_PERCENTAGE)
+        self.enable_filter_range_var.set(config.ENABLE_FILTER_RANGE)
+        self.filter_range_min_var.set(config.FILTER_RANGE_MIN)
+        self.filter_range_max_var.set(config.FILTER_RANGE_MAX)
         self.verbose_var.set(config.VERBOSE)
         self.make_plot_var.set(config.MAKE_PLOT)
         self.show_bounds_var.set(config.SHOW_BOUNDS)
@@ -166,6 +172,9 @@ class RunWindow:
             f"DOUBLE_TRAIN_FILE={double_train_file}",
             f"MAX_SEQS={self.max_seqs_var.get()}",
             f"TRAIN_PERCENTAGE={self.train_percentage_var.get()}",
+            f"ENABLE_FILTER_RANGE={self.enable_filter_range_var.get()}",
+            f"FILTER_RANGE_MIN={self.filter_range_min_var.get()}",
+            f"FILTER_RANGE_MAX={self.filter_range_max_var.get()}",
             f"VERBOSE={self.verbose_var.get()}",
             f"MAKE_PLOT={self.make_plot_var.get()}",
             f"SHOW_BOUNDS={self.show_bounds_var.get()}",
